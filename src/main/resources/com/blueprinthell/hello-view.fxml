@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="1080" prefWidth="1920" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+   <!-- پس‌زمینه -->
+   <children>
+      <ImageView fitHeight="1080" fitWidth="1920" preserveRatio="true">
+         <image>
+            <Image url="@../../images/MainMenuBackground.png" />
+         </image>
+      </ImageView>
+
+      <!-- عنوان بازی -->
+      <Label alignment="CENTER" layoutX="110" layoutY="30.0" prefHeight="292" prefWidth="1700" text="BLUEPRINT HELL" textFill="WHITE">
+         <font>
+            <Font name="X Vosta" size="190.0" />
+         </font>
+      </Label>
+
+      <!-- منوی دکمه‌ها -->
+      <VBox alignment="CENTER" layoutX="460.0" layoutY="300.0" prefHeight="700.0" prefWidth="1000.0" spacing="30">
+         <padding>
+            <Insets bottom="10" left="20" right="20" top="10" />
+         </padding>
+
+         <!-- دکمه‌ها -->
+         <children>
+            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="START GAME" textFill="WHITE">
+               <font>
+                  <Font name="X Vosta" size="75.0" />
+               </font>
+            </Button>
+            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="LEVELS" textFill="WHITE">
+               <font>
+                  <Font name="X Vosta" size="75.0" />
+               </font>
+            </Button>
+            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="SETTING" textFill="WHITE">
+               <font>
+                  <Font name="X Vosta" size="75.0" />
+               </font>
+            </Button>
+            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="EXIT" textFill="WHITE">
+               <font>
+                  <Font name="X Vosta" size="75.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
