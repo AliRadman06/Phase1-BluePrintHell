@@ -11,7 +11,7 @@ import java.net.URL;
 public class Game extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // === حتماً این مسیر را با مسیر واقعی فایل FXML‌تان تطبیق دهید ===
+
         URL fxmlUrl = getClass().getResource("/com/blueprinthell/hello-view.fxml");
         if (fxmlUrl == null) {
             throw new RuntimeException("FXML file not found: /com/blueprinthell/main-menu.fxml");

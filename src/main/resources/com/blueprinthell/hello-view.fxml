@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080" prefWidth="1920" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="1080" prefWidth="1920" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blueprinthell.controller.MainMenuController">
 
    <!-- پس‌زمینه -->
    <children>
@@ -34,7 +34,7 @@
 
          <!-- دکمه‌ها -->
          <children>
-            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="START GAME" textFill="WHITE">
+            <Button fx:id="StartButton" onAction="#SwitchGameView" prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="START GAME" textFill="WHITE">
                <font>
                   <Font name="X Vosta" size="75.0" />
                </font>
@@ -49,7 +49,7 @@
                   <Font name="X Vosta" size="75.0" />
                </font>
             </Button>
-            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="EXIT" textFill="WHITE">
+            <Button onAction="#ExitApp" prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="EXIT" textFill="WHITE">
                <font>
                   <Font name="X Vosta" size="75.0" />
                </font>
