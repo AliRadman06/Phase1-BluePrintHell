@@ -1,13 +1,16 @@
 package com.blueprinthell.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 
 public class GameViewController {
-    @FXML private Pane gamePane;
+    @FXML
+    private AnchorPane gamePane;
 
     @FXML
     public void initialize() {
-        // در اینجا بعداً DeviceView و PacketView اضافه می‌کنیم
+        gamePane.setPrefHeight(gamePane.getHeight());
+        gamePane.setPrefWidth(gamePane.getWidth());
+
     }
 }

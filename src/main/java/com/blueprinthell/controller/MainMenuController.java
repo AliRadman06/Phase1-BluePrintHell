@@ -1,36 +1,43 @@
 package com.blueprinthell.controller;
 
+import com.blueprinthell.util.Constants;
+import com.blueprinthell.view.GameView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class MainMenuController {
+    @FXML
+    private AnchorPane gamePane;
+    @FXML
+    private Button StartButton;
+    @FXML
+    private ImageView backgroundImage;
 
     @FXML
-    Button StartButton;
-
-    @FXML
-    private void SwitchGameView(){
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/blueprinthell/game-view.fxml")
-            );
-
-            Parent gameRoot = loader.load();
-            Stage stage = (Stage) StartButton.getScene().getWindow();
-            stage.getScene().setRoot(gameRoot);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void initialize() {
+        // Bind background image to pane size
+        gamePane.setPrefHeight(Constants.SCREEN_HEIGHT);
+        gamePane.setPrefWidth(Constants.SCREEN_WIDTH);
+        backgroundImage.fitWidthProperty().bind(gamePane.widthProperty());
+        backgroundImage.fitHeightProperty().bind(gamePane.heightProperty());
     }
 
     @FXML
-    private void ExitApp(){
+    private void SwitchGameView() {
+
+        Stage stage = (Stage) StartButton.getScene().getWindow();
+        GameView gameView = new GameView();
+        stage.getScene().setRoot(gameView);
+    }
+
+    @FXML
+    private void ExitApp() {
         System.exit(0);
     }
 }

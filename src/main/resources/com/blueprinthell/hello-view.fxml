@@ -9,52 +9,50 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080" prefWidth="1920" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blueprinthell.controller.MainMenuController">
+<AnchorPane fx:id="gamePane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blueprinthell.controller.MainMenuController">
 
    <!-- پس‌زمینه -->
-   <children>
-      <ImageView fitHeight="1080" fitWidth="1920" preserveRatio="true">
-         <image>
-            <Image url="@../../images/MainMenuBackground.png" />
-         </image>
-      </ImageView>
+   <ImageView fx:id="backgroundImage" preserveRatio="false">
+      <image>
+         <Image url="@../../images/MainMenuBackground.png" />
+      </image>
+   </ImageView>
 
-      <!-- عنوان بازی -->
-      <Label alignment="CENTER" layoutX="110" layoutY="30.0" prefHeight="292" prefWidth="1700" text="BLUEPRINT HELL" textFill="WHITE">
-         <font>
-            <Font name="X Vosta" size="190.0" />
-         </font>
-      </Label>
+   <!-- عنوان بازی -->
+   <Label alignment="CENTER" text="BLUEPRINT HELL" textFill="WHITE" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="50">
+      <font>
+         <Font size="160.0" />
+      </font>
+   </Label>
 
-      <!-- منوی دکمه‌ها -->
-      <VBox alignment="CENTER" layoutX="460.0" layoutY="300.0" prefHeight="700.0" prefWidth="1000.0" spacing="30">
-         <padding>
-            <Insets bottom="10" left="20" right="20" top="10" />
-         </padding>
+   <!-- منوی دکمه‌ها -->
+   <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="500" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="750">
+      <padding>
+         <Insets bottom="10" left="20" right="20" top="10" />
+      </padding>
 
-         <!-- دکمه‌ها -->
-         <children>
-            <Button fx:id="StartButton" onAction="#SwitchGameView" prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="START GAME" textFill="WHITE">
-               <font>
-                  <Font name="X Vosta" size="75.0" />
-               </font>
-            </Button>
-            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="LEVELS" textFill="WHITE">
-               <font>
-                  <Font name="X Vosta" size="75.0" />
-               </font>
-            </Button>
-            <Button prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="SETTING" textFill="WHITE">
-               <font>
-                  <Font name="X Vosta" size="75.0" />
-               </font>
-            </Button>
-            <Button onAction="#ExitApp" prefHeight="130" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="EXIT" textFill="WHITE">
-               <font>
-                  <Font name="X Vosta" size="75.0" />
-               </font>
-            </Button>
-         </children>
-      </VBox>
-   </children>
+      <!-- دکمه‌ها -->
+      <children>
+         <Button fx:id="StartButton" onAction="#SwitchGameView" prefHeight="100" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="START GAME" textFill="WHITE">
+            <font>
+               <Font name="X Vosta" size="75.0" />
+            </font>
+         </Button>
+         <Button prefHeight="100" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="LEVELS" textFill="WHITE">
+            <font>
+               <Font name="X Vosta" size="75.0" />
+            </font>
+         </Button>
+         <Button prefHeight="100" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="SETTING" textFill="WHITE">
+            <font>
+               <Font name="X Vosta" size="75.0" />
+            </font>
+         </Button>
+         <Button onAction="#ExitApp" prefHeight="100" prefWidth="550.0" style="-fx-background-color: rgba(4,19,56,0.34); -fx-background-radius: 30;" text="EXIT" textFill="WHITE">
+            <font>
+               <Font name="X Vosta" size="75.0" />
+            </font>
+         </Button>
+      </children>
+   </VBox>
 </AnchorPane>
