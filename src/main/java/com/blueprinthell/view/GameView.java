@@ -1,5 +1,8 @@
 package com.blueprinthell.view;
 
+import com.blueprinthell.model.NetworkDevice;
+import com.blueprinthell.model.SystemFactory;
+import com.blueprinthell.model.SystemType;
 import com.blueprinthell.util.Constants;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +51,26 @@ public class GameView extends AnchorPane {
         backButton.setOnAction(e -> goBackToMenu());
         getChildren().add(backButton);
 
+
+        // — نمونهٔ StartSystem —
+        NetworkDevice s1 = SystemFactory.createSystem(SystemType.START, "s1", 200, 200);
+        s1.initialize();
+        AbstractDeviceView v1 = DeviceViewFactory.create(s1);
+        gamePane.getChildren().add(v1);
+
+        // — نمونهٔ ProcessingSystem —
+        NetworkDevice p1 = SystemFactory.createSystem(SystemType.PROCESSING, "p1", 600, 320);
+        p1.initialize();
+        AbstractDeviceView v2 = DeviceViewFactory.create(p1);
+        gamePane.getChildren().add(v2);
+
+
+        // — نمونهٔ EndSystem —
+        NetworkDevice e1 = SystemFactory.createSystem(SystemType.END, "e1", 1000, 440);
+        e1.initialize();
+        AbstractDeviceView v3 = DeviceViewFactory.create(e1);
+        gamePane.getChildren().add(v3);
+
     }
 
     private void drawGrid() {
@@ -73,17 +96,7 @@ public class GameView extends AnchorPane {
     }
 
     private void goBackToMenu() {
-        try {
-            // ۱. لود FXML منوی اصلی
-            Parent menuRoot = FXMLLoader.load(
-                    getClass().getResource("/com/blueprinthell/hello-view.fxml")
-            );
-            // ۲. یافتن Stage جاری
-            Stage stage = (Stage) getScene().getWindow();
-            // ۳. تعویض ریشهٔ صحنه
-            stage.getScene().setRoot(menuRoot);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        Stage stage = (Stage) getScene().getWindow();
+        stage.getScene().setRoot(new MainMenuView());
     }
 }

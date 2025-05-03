@@ -21,7 +21,7 @@
    <!-- عنوان بازی -->
    <Label alignment="CENTER" text="BLUEPRINT HELL" textFill="WHITE" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="50">
       <font>
-         <Font size="160.0" />
+         <Font name="X Vosta" size="160.0" />
       </font>
    </Label>
 

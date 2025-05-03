@@ -1,7 +1,8 @@
 package com.blueprinthell.model;
 
+/** انواع سیستم‌های شبکه‌ای */
 public enum SystemType {
-    Start,
-    Process,
-    End
+    START,
+    PROCESSING,
+    END
 }
