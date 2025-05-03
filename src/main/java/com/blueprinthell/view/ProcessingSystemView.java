@@ -27,6 +27,10 @@ public class ProcessingSystemView extends AbstractDeviceView {
         label.setX((body.getWidth() - label.getLayoutBounds().getWidth()) / 2);
         label.setY((body.getHeight() + label.getLayoutBounds().getHeight()) / 2);
 
+        body.setOnMouseMoved(e ->
+                System.out.println("Hovered SYSTEM: " + model.getId())
+        );
+
         getChildren().addAll(body, label);
         drawPorts();
     }

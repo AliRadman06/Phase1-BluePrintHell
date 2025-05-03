@@ -36,28 +36,37 @@ public abstract class AbstractDeviceView extends Group {
      * رسمِ پورت‌های IN در ضلع چپ و OUT در ضلع راست
      */
     protected void drawPorts() {
-        double size   = 20; // اندازهٔ مربعِ پورت
-        double offset = 5;  // فاصله از لبهٔ بدنه و بین پورت‌ها
+        double size   = 20;  // اندازه مربعِ پورت
+        double offset = 1;   // فاصله بین پورت‌ها و از لبهٔ بدنه
 
-        // 1) پورت‌های ورودی (IN) روی ضلع چپ
-        int i = 0;
-        for (Port p : model.getInPorts()) {
+        // --- پورت‌های IN روی ضلع چپ، وسط چین عمودی ---
+        int inCount = model.getInPorts().size();
+        // ارتفاع کلی ستون پورت‌ها: تعداد * size + (تعداد-1)*offset
+        double totalInH = inCount*size + (inCount-1)*offset;
+        // نقطه شروع: (بدنه-ارتفاع ستون)/2
+        double startYIn = (getBodyHeight() - totalInH) / 2;
+
+        for (int i = 0; i < inCount; i++) {
+            Port p = model.getInPorts().get(i);
             double x = -size - offset;
-            double y = offset + i * (size + offset);
+            double y = startYIn + i*(size + offset);
             drawPortShape(p, x, y, size);
-            i++;
         }
 
-        // 2) پورت‌های خروجی (OUT) روی ضلع راست
-        i = 0;
+        // --- پورت‌های OUT روی ضلع راست، وسط چین عمودی ---
+        int outCount = model.getOutPorts().size();
+        double totalOutH = outCount*size + (outCount-1)*offset;
+        double startYOut = (getBodyHeight() - totalOutH) / 2;
+
         double bodyW = getBodyWidth();
-        for (Port p : model.getOutPorts()) {
+        for (int i = 0; i < outCount; i++) {
+            Port p = model.getOutPorts().get(i);
             double x = bodyW + offset;
-            double y = offset + i * (size + offset);
+            double y = startYOut + i*(size + offset);
             drawPortShape(p, x, y, size);
-            i++;
         }
     }
+
 
     /**
      * رسمِ یک مربع و یک مثلث برای هر پورت
@@ -65,31 +74,21 @@ public abstract class AbstractDeviceView extends Group {
     private void drawPortShape(Port p, double x, double y, double size) {
         // مربع
         Rectangle square = new Rectangle(x, y, size, size);
-        square.setFill(
-                p.getDirection() == Port.Direction.IN
-                        ? Color.DODGERBLUE
-                        : Color.SALMON
+
+        square.setArcHeight(10);
+        square.setArcWidth(10);
+
+
+        square.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);
+
+        square.setOnMouseMoved(evt ->
+                System.out.println("Hovered PORT: "
+                        + p.getDirection()
+                        + " on System " + model.getId())
         );
+
         getChildren().add(square);
 
-        // مثلث متساوی‌الاضلاع
-        Polygon tri = new Polygon(
-                0.0, 0.0,
-                size, 0.0,
-                size/2, size * Math.sqrt(3)/2
-        );
-        tri.setFill(square.getFill());
 
-        if (p.getDirection() == Port.Direction.OUT) {
-            // چرخش ۱۸۰ درجه و جابجایی زیر مربع
-            tri.setRotate(180);
-            tri.setLayoutX(x + size);
-            tri.setLayoutY(y + size);
-        } else {
-            // IN: بالای مربع
-            tri.setLayoutX(x);
-            tri.setLayoutY(y - size * Math.sqrt(3)/2);
-        }
-        getChildren().add(tri);
     }
 }

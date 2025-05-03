@@ -20,6 +20,10 @@ public class StartSystemView extends AbstractDeviceView {
         body.setStroke(Color.DARKGREEN);
         getChildren().add(body);
 
+        body.setOnMouseMoved(e ->
+                System.out.println("Hovered SYSTEM: " + model.getId())
+        );
+
         drawPorts(); // رسمِ پورت‌ها پس از بدنه
     }
 
