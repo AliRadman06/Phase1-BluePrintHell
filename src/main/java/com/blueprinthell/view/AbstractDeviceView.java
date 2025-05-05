@@ -75,8 +75,8 @@ public abstract class AbstractDeviceView extends Group {
         // مربع
         Rectangle square = new Rectangle(x, y, size, size);
 
-        square.setArcHeight(10);
-        square.setArcWidth(10);
+        square.setArcHeight(2);
+        square.setArcWidth(2);
 
 
         square.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);

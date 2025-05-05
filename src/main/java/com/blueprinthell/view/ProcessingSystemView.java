@@ -1,13 +1,17 @@
 package com.blueprinthell.view;
 
 import com.blueprinthell.model.NetworkDevice;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class ProcessingSystemView extends AbstractDeviceView {
     private Rectangle body;
+    private Rectangle innerBody;
+    private Circle lamp;
 
     public ProcessingSystemView(NetworkDevice model) {
         super(model);
@@ -16,23 +20,32 @@ public class ProcessingSystemView extends AbstractDeviceView {
     @Override
     protected void initializeGraphics() {
         body = new Rectangle(0, 0, 200, 200);
-        body.setArcWidth(5);
-        body.setArcHeight(5);
-        body.setFill(Color.LIGHTBLUE);
-        body.setStroke(Color.DARKBLUE);
+        innerBody = new Rectangle(5, 50, 190, 140);
+        lamp = new Circle(180, 25, 15);
 
-        Text label = new Text("PROC");
-        label.setFont(Font.font(24));
-        label.setFill(Color.DARKBLUE);
-        label.setX((body.getWidth() - label.getLayoutBounds().getWidth()) / 2);
-        label.setY((body.getHeight() + label.getLayoutBounds().getHeight()) / 2);
+        lamp.setFill(Color.rgb(40, 40, 40));
+        lamp.setStroke(Color.rgb(40, 40, 40).darker().darker().darker());
+
+        body.setArcWidth(10);
+        body.setArcHeight(10);
+
+
+        innerBody.setArcWidth(10);
+        innerBody.setArcHeight(10);
+
+
+        body.setFill(Color.rgb(80, 80, 80));
+        body.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+
+        innerBody.setFill(Color.rgb(40, 40 ,40));
+        innerBody.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+        getChildren().addAll(body, innerBody, lamp);
 
         body.setOnMouseMoved(e ->
                 System.out.println("Hovered SYSTEM: " + model.getId())
         );
 
-        getChildren().addAll(body, label);
-        drawPorts();
+        drawPorts(); // رسمِ پورت‌ها پس از بدنه
     }
 
     @Override
