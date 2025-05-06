@@ -1,12 +1,10 @@
 package com.blueprinthell.view;
 
 import com.blueprinthell.model.NetworkDevice;
+import com.blueprinthell.model.Port;
 import com.blueprinthell.model.SystemFactory;
 import com.blueprinthell.model.SystemType;
-import com.blueprinthell.util.Constants;
 import javafx.beans.value.ChangeListener;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -14,12 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class GameView extends AnchorPane {
+public class GameViewL1 extends AnchorPane {
     private final Canvas gridCanvas;
     private final Button backButton;
 
 
-    public GameView() {
+    public GameViewL1() {
 
         gridCanvas = new Canvas();
         gridCanvas.widthProperty().bind(widthProperty());
@@ -54,19 +52,58 @@ public class GameView extends AnchorPane {
 
         // — نمونهٔ StartSystem —
         NetworkDevice s1 = SystemFactory.createSystem(SystemType.START, "s1", 200, 200);
+        Port s1out1 = new Port(s1, Port.Direction.OUT, Port.Shape.SQUARE);
+        Port s1out2 = new Port(s1, Port.Direction.OUT, Port.Shape.TRIANGLE);
+
+        s1out1.setRelativeY(0.7);
+        s1out2.setRelativeY(0.3);
+
+        s1.getOutPorts().add(s1out1);
+        s1.getOutPorts().add(s1out2);
+
         s1.initialize();
         AbstractDeviceView v1 = DeviceViewFactory.create(s1);
         gamePane.getChildren().add(v1);
 
         // — نمونهٔ ProcessingSystem —
         NetworkDevice p1 = SystemFactory.createSystem(SystemType.PROCESSING, "p1", 600, 320);
+
+        Port p1in1 = new Port(p1, Port.Direction.IN, Port.Shape.SQUARE);
+        Port p1in2 = new Port(p1, Port.Direction.IN, Port.Shape.TRIANGLE);
+
+        p1in1.setRelativeY(0.7);
+        p1in2.setRelativeY(0.3);
+
+        p1.getInPorts().add(p1in1);
+        p1.getInPorts().add(p1in2);
+
+        Port p1out1 = new Port(p1, Port.Direction.OUT, Port.Shape.SQUARE);
+        Port p1out2 = new Port(p1, Port.Direction.OUT, Port.Shape.TRIANGLE);
+
+        p1out1.setRelativeY(0.7);
+        p1out2.setRelativeY(0.3);
+
+        p1.getOutPorts().add(p1out1);
+        p1.getOutPorts().add(p1out2);
+
         p1.initialize();
+
         AbstractDeviceView v2 = DeviceViewFactory.create(p1);
         gamePane.getChildren().add(v2);
 
 
         // — نمونهٔ EndSystem —
         NetworkDevice e1 = SystemFactory.createSystem(SystemType.END, "e1", 1000, 440);
+
+        Port e1in1 = new Port(e1, Port.Direction.IN, Port.Shape.SQUARE);
+        Port e1in2 = new Port(e1, Port.Direction.IN, Port.Shape.TRIANGLE);
+
+        e1in1.setRelativeY(0.7);
+        e1in2.setRelativeY(0.3);
+
+        e1.getInPorts().add(e1in1);
+        e1.getInPorts().add(e1in2);
+
         e1.initialize();
         AbstractDeviceView v3 = DeviceViewFactory.create(e1);
         gamePane.getChildren().add(v3);

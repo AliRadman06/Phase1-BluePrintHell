@@ -1,15 +1,12 @@
 package com.blueprinthell.controller;
 
 import com.blueprinthell.util.Constants;
-import com.blueprinthell.view.GameView;
+import com.blueprinthell.view.GameViewL1;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import java.io.IOException;
 
 public class MainMenuController {
     @FXML
@@ -32,8 +29,8 @@ public class MainMenuController {
     private void SwitchGameView() {
 
         Stage stage = (Stage) StartButton.getScene().getWindow();
-        GameView gameView = new GameView();
-        stage.getScene().setRoot(gameView);
+        GameViewL1 gameViewL1 = new GameViewL1();
+        stage.getScene().setRoot(gameViewL1);
     }
 
     @FXML

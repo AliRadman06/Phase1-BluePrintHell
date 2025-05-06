@@ -4,9 +4,6 @@ package com.blueprinthell.model;
 public class StartSystem extends NetworkDevice {
     public StartSystem(String id, double x, double y) {
         super(id, x, y);
-        // مثال: هر سیستم یک پورت IN و یک پورت OUT داشته باشد:
-        inPorts .add(new Port(this, Port.Direction.IN));
-        outPorts.add(new Port(this, Port.Direction.OUT));
     }
 
     @Override

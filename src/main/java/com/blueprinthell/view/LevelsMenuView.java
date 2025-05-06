@@ -73,7 +73,7 @@ public class LevelsMenuView extends AnchorPane {
 
     private void switchToLevel1() {
         Stage stage = (Stage) getScene().getWindow();
-        stage.getScene().setRoot(new GameView());
+        stage.getScene().setRoot(new GameViewL1());
     }
 
     private void switchToLevel2() {}

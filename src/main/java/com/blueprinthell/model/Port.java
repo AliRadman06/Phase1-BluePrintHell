@@ -9,15 +9,19 @@ import java.util.Queue;
 public class Port {
 
     public enum Direction { IN, OUT }
+    public enum Shape{ SQUARE, TRIANGLE }
 
     private final NetworkDevice owner;
     private final Direction direction;
     private final Queue<Packet> buffer = new LinkedList<>();
     private final int capacity = 5;
+    private final Shape shape;
+    private double relativeY = -1 ;
 
-    public Port(NetworkDevice owner, Direction direction) {
+    public Port(NetworkDevice owner, Direction direction, Shape shape) {
         this.owner     = owner;
         this.direction = direction;
+        this.shape  = shape;
     }
 
     public Direction getDirection() { return direction; }
@@ -30,4 +34,18 @@ public class Port {
     public Packet dequeue() {
         return buffer.poll();
     }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public double getRelativeY() {
+        return relativeY;
+    }
+
+    public void setRelativeY(double y) {
+        this.relativeY = y;
+    }
+
+
 }
