@@ -47,5 +47,7 @@ public class Port {
         this.relativeY = y;
     }
 
+    public NetworkDevice getOwner() { return owner; }
+
 
 }

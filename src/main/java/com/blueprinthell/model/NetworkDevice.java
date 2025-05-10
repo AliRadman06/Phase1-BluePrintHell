@@ -6,9 +6,10 @@ import java.util.List;
 /**
  * پایه‌ی مشترک همهٔ سیستم‌ها
  */
-public abstract class NetworkDevice {
+public abstract class
+NetworkDevice {
     private final String id;
-    private final double x, y;
+    private  double x, y;
     protected final List<Port> inPorts  = new ArrayList<>();
     protected final List<Port> outPorts = new ArrayList<>();
 
@@ -19,6 +20,8 @@ public abstract class NetworkDevice {
     }
 
     public String getId()            { return id; }
+    public void setX(double  x) { this.x = x; }
+    public void setY(double  y) { this.y = y; }
     public double getX()             { return x; }
     public double getY()             { return y; }
     public List<Port> getInPorts()   { return inPorts; }

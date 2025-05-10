@@ -52,6 +52,8 @@ public class GameViewL1 extends AnchorPane {
 
         // — نمونهٔ StartSystem —
         NetworkDevice s1 = SystemFactory.createSystem(SystemType.START, "s1", 200, 200);
+        s1.setX(200);
+        s1.setY(200);
         Port s1out1 = new Port(s1, Port.Direction.OUT, Port.Shape.SQUARE);
         Port s1out2 = new Port(s1, Port.Direction.OUT, Port.Shape.TRIANGLE);
 
@@ -62,12 +64,14 @@ public class GameViewL1 extends AnchorPane {
         s1.getOutPorts().add(s1out2);
 
         s1.initialize();
+
         AbstractDeviceView v1 = DeviceViewFactory.create(s1);
         gamePane.getChildren().add(v1);
 
         // — نمونهٔ ProcessingSystem —
         NetworkDevice p1 = SystemFactory.createSystem(SystemType.PROCESSING, "p1", 600, 320);
-
+        p1.setX(600);
+        p1.setY(320);
         Port p1in1 = new Port(p1, Port.Direction.IN, Port.Shape.SQUARE);
         Port p1in2 = new Port(p1, Port.Direction.IN, Port.Shape.TRIANGLE);
 
@@ -94,6 +98,9 @@ public class GameViewL1 extends AnchorPane {
 
         // — نمونهٔ EndSystem —
         NetworkDevice e1 = SystemFactory.createSystem(SystemType.END, "e1", 1000, 440);
+        e1.setX(1000);
+        e1.setY(440);
+        System.out.println(e1.getX());
 
         Port e1in1 = new Port(e1, Port.Direction.IN, Port.Shape.SQUARE);
         Port e1in2 = new Port(e1, Port.Direction.IN, Port.Shape.TRIANGLE);

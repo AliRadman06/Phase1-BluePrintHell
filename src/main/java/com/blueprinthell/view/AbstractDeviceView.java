@@ -2,10 +2,15 @@ package com.blueprinthell.view;
 
 import com.blueprinthell.model.Port;
 import com.blueprinthell.model.NetworkDevice;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractDeviceView extends Group {
     protected final NetworkDevice model;
@@ -14,6 +19,10 @@ public abstract class AbstractDeviceView extends Group {
         this.model = model;
         initializeGraphics();
         updatePosition();
+        this.setOnMouseClicked(evt -> {
+            showPortLocations();
+            evt.consume();
+        });
     }
 
     protected abstract void initializeGraphics();
@@ -74,4 +83,53 @@ public abstract class AbstractDeviceView extends Group {
             }
         }
     }
+
+    public List<Point2D> getInputPortLocations() {
+        return computePortLocations(model.getInPorts(), Port.Direction.IN);
+    }
+
+    public List<Point2D> getOutputPortLocations() {
+        return computePortLocations(model.getOutPorts(), Port.Direction.OUT);
+    }
+
+    private List<Point2D> computePortLocations(List<Port> ports, Port.Direction dir) {
+        List<Point2D> locs = new ArrayList<>();
+        double viewX = getTranslateX();       // یا layoutX
+        double viewY = getTranslateY();       // یا layoutY
+        double w     = 200;
+        double h     = 200;
+        for (Port p : ports) {
+            double x = p.getOwner().getX() + viewX + (dir == Port.Direction.OUT ? w : 0);
+            double y = p.getOwner().getY() + viewY + p.getRelativeY() * h;
+            locs.add(new Point2D(x, y));
+        }
+        return locs;
+    }
+
+    private void showPortLocations() {
+        List<Point2D> ins  = getInputPortLocations();
+        List<Point2D> outs = getOutputPortLocations();
+
+        StringBuilder msg = new StringBuilder();
+        if (ins.isEmpty()) {
+            msg.append("ورودی ندارد\n");
+        } else {
+            msg.append("ورودی‌ها:\n");
+            for (Point2D p : ins) {
+                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
+            }
+        }
+        if (outs.isEmpty()) {
+            msg.append("خروجی ندارد\n");
+        } else {
+            msg.append("خروجی‌ها:\n");
+            for (Point2D p : outs) {
+                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
+            }
+        }
+
+        System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
+
+    }
+
 }
