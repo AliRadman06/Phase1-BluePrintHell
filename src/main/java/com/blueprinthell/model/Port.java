@@ -1,5 +1,7 @@
 package com.blueprinthell.model;
 
+import javafx.geometry.Point2D;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,6 +19,7 @@ public class Port {
     private final int capacity = 5;
     private final Shape shape;
     private double relativeY = -1 ;
+    private Point2D Center;
 
     public Port(NetworkDevice owner, Direction direction, Shape shape) {
         this.owner     = owner;
@@ -48,6 +51,24 @@ public class Port {
     }
 
     public NetworkDevice getOwner() { return owner; }
+
+    public void setCenter() {
+
+        double baseX = owner.getX();
+        double baseY = owner.getY();
+
+        double w = 200;
+        double h = 200;
+
+        double x = baseX + (direction == Direction.OUT ? w : 0);
+        double y = baseY + relativeY * h;
+
+        this.Center = new Point2D(x, y);
+    }
+
+    public Point2D getCenter() {
+        return Center;
+    }
 
 
 }

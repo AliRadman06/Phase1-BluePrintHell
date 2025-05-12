@@ -9,12 +9,16 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GameViewL1 extends AnchorPane {
     private final Canvas gridCanvas;
     private final Button backButton;
+    private Pane wiringLayer = new Pane();
+    public static final double TOTAL_WIRE = 1000.0;  // کل طول سیم مجاز
+
 
 
     public GameViewL1() {
@@ -30,6 +34,7 @@ public class GameViewL1 extends AnchorPane {
         heightProperty().addListener(redraw);
 
         drawGrid();
+        getChildren().add(0, wiringLayer);
 
         AnchorPane gamePane = new AnchorPane();
         AnchorPane.setTopAnchor   (gamePane, 0.0);
@@ -142,5 +147,9 @@ public class GameViewL1 extends AnchorPane {
     private void goBackToMenu() {
         Stage stage = (Stage) getScene().getWindow();
         stage.getScene().setRoot(new MainMenuView());
+    }
+
+    public Pane getWiringLayer() {
+        return wiringLayer;
     }
 }

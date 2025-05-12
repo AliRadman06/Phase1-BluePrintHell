@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.blueprinthell.util.Constants;
@@ -21,7 +22,9 @@ public class Game extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Blueprint Hell");
         primaryStage.setFullScreen(true);
+        primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/images/icon.png")));
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {

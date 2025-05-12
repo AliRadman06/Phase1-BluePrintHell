@@ -4,6 +4,7 @@ import com.blueprinthell.model.Port;
 import com.blueprinthell.model.NetworkDevice;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -14,6 +15,8 @@ import java.util.List;
 
 public abstract class AbstractDeviceView extends Group {
     protected final NetworkDevice model;
+    private final List<Node> portNodes = new ArrayList<>();
+
 
     public AbstractDeviceView(NetworkDevice model) {
         this.model = model;
@@ -56,17 +59,15 @@ public abstract class AbstractDeviceView extends Group {
         }
     }
 
-    private void drawPortShape(Port p, double x, double y, double size) {
+    private Node drawPortShape(Port p, double x, double y, double size) {
+        Node shape;
         switch (p.getShape()) {
             case SQUARE -> {
                 Rectangle square = new Rectangle(x, y, size, size);
                 square.setArcHeight(2);
                 square.setArcWidth(2);
                 square.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);
-                square.setOnMouseMoved(evt ->
-                        System.out.println("Hovered PORT: " + p.getDirection() + " on System " + model.getId())
-                );
-                getChildren().add(square);
+                shape = square;
             }
             case TRIANGLE -> {
                 Polygon triangle = new Polygon(
@@ -75,13 +76,21 @@ public abstract class AbstractDeviceView extends Group {
                         x, y + size
                 );
                 triangle.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);
-                triangle.setOnMouseMoved(evt ->
-                        System.out.println("Hovered PORT: " + p.getDirection() + " on System " + model.getId())
-                );
-                triangle.setRotate(90);
-                getChildren().add(triangle);
+                triangle.setRotate(p.getDirection() == Port.Direction.IN ? 270 : 90);
+                shape = triangle;
             }
+            default -> throw new IllegalStateException("UnKnown port shape");
         }
+        shape.setUserData(p);
+        shape.setOnMouseClicked(evt ->
+                System.out.println("Hovered PORT: " + p.getDirection() + " on system " + model.getId())
+        );
+        getChildren().add(shape);
+        return shape;
+    }
+
+    public List<Node> getAllPortNodes() {
+        return List.copyOf(portNodes);
     }
 
     public List<Point2D> getInputPortLocations() {
@@ -101,6 +110,7 @@ public abstract class AbstractDeviceView extends Group {
         for (Port p : ports) {
             double x = p.getOwner().getX() + viewX + (dir == Port.Direction.OUT ? w : 0);
             double y = p.getOwner().getY() + viewY + p.getRelativeY() * h;
+            p.setCenter();
             locs.add(new Point2D(x, y));
         }
         return locs;
@@ -129,7 +139,6 @@ public abstract class AbstractDeviceView extends Group {
         }
 
         System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
-
     }
 
 }
