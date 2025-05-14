@@ -37,4 +37,9 @@ public class WireView {
                 p3.getX(), p3.getY()
         ));
     }
+
+    public void bindToBudget(double remainingWire) {
+        boolean valid = model.isWithinBudget(remainingWire);
+        curve.setStroke(valid ? Color.GREEN : Color.RED);
+    }
 }

@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GameViewL1 extends AnchorPane {
+    private final AnchorPane gamePane;
     private final Canvas gridCanvas;
     private final Button backButton;
     private Pane wiringLayer = new Pane();
@@ -34,14 +35,14 @@ public class GameViewL1 extends AnchorPane {
         heightProperty().addListener(redraw);
 
         drawGrid();
-        getChildren().add(0, wiringLayer);
 
-        AnchorPane gamePane = new AnchorPane();
+        this.gamePane = new AnchorPane();
         AnchorPane.setTopAnchor   (gamePane, 0.0);
         AnchorPane.setBottomAnchor(gamePane, 0.0);
         AnchorPane.setLeftAnchor  (gamePane, 0.0);
         AnchorPane.setRightAnchor (gamePane, 0.0);
         getChildren().add(gamePane);
+        getChildren().add(0, wiringLayer);
 
         // --- دکمهٔ Back ---
         backButton = new Button("Back");
@@ -152,4 +153,10 @@ public class GameViewL1 extends AnchorPane {
     public Pane getWiringLayer() {
         return wiringLayer;
     }
+
+    public AnchorPane getGamePane() {
+        return gamePane;
+    }
+
+
 }

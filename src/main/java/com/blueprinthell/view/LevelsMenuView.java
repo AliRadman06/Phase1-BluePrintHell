@@ -1,5 +1,6 @@
 package com.blueprinthell.view;
 
+import com.blueprinthell.controller.WiringController;
 import com.blueprinthell.util.Constants;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -73,7 +74,9 @@ public class LevelsMenuView extends AnchorPane {
 
     private void switchToLevel1() {
         Stage stage = (Stage) getScene().getWindow();
-        stage.getScene().setRoot(new GameViewL1());
+        GameViewL1 view = new GameViewL1();
+        stage.getScene().setRoot(view);
+        new WiringController(view);
     }
 
     private void switchToLevel2() {}

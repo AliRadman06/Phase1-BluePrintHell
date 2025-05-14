@@ -48,6 +48,7 @@ public abstract class AbstractDeviceView extends Group {
                     : (getBodyHeight() - size) / 2;
             double x = -size - offset;
             drawPortShape(p, x, y, size);
+            p.setCenter();
         }
 
         for (Port p : model.getOutPorts()) {
@@ -56,6 +57,7 @@ public abstract class AbstractDeviceView extends Group {
                     : (getBodyHeight() - size) / 2;
             double x = getBodyWidth() + offset;
             drawPortShape(p, x, y, size);
+            p.setCenter();
         }
     }
 
@@ -86,6 +88,7 @@ public abstract class AbstractDeviceView extends Group {
                 System.out.println("Hovered PORT: " + p.getDirection() + " on system " + model.getId())
         );
         getChildren().add(shape);
+        portNodes.add(shape);
         return shape;
     }
 
@@ -117,28 +120,28 @@ public abstract class AbstractDeviceView extends Group {
     }
 
     private void showPortLocations() {
-        List<Point2D> ins  = getInputPortLocations();
-        List<Point2D> outs = getOutputPortLocations();
-
-        StringBuilder msg = new StringBuilder();
-        if (ins.isEmpty()) {
-            msg.append("ورودی ندارد\n");
-        } else {
-            msg.append("ورودی‌ها:\n");
-            for (Point2D p : ins) {
-                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
-            }
-        }
-        if (outs.isEmpty()) {
-            msg.append("خروجی ندارد\n");
-        } else {
-            msg.append("خروجی‌ها:\n");
-            for (Point2D p : outs) {
-                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
-            }
-        }
-
-        System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
+//        List<Point2D> ins  = getInputPortLocations();
+//        List<Point2D> outs = getOutputPortLocations();
+//
+//        StringBuilder msg = new StringBuilder();
+//        if (ins.isEmpty()) {
+//            msg.append("ورودی ندارد\n");
+//        } else {
+//            msg.append("ورودی‌ها:\n");
+//            for (Point2D p : ins) {
+//                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
+//            }
+//        }
+//        if (outs.isEmpty()) {
+//            msg.append("خروجی ندارد\n");
+//        } else {
+//            msg.append("خروجی‌ها:\n");
+//            for (Point2D p : outs) {
+//                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
+//            }
+//        }
+//
+//        System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
     }
 
 }
