@@ -17,6 +17,7 @@ public class WireView {
         this.curve.setStrokeWidth(2);
         this.curve.setStroke(Color.GREEN);
         updateShape();
+
     }
 
     public Path getCurve() {
@@ -30,12 +31,14 @@ public class WireView {
         double ctrlX = (p0.getX() + p3.getX())/2;
         Point2D p1 = new Point2D(ctrlX, p0.getY());
         Point2D p2 = new Point2D(ctrlX, p3.getY());
-        curve.getElements().add(new MoveTo(p1.getX(), p1.getY()));
+        curve.getElements().add(new MoveTo(p0.getX(), p0.getY()));
         curve.getElements().add(new CubicCurveTo(
                 p1.getX(), p1.getY(),
                 p2.getX(), p2.getY(),
                 p3.getX(), p3.getY()
         ));
+
+//        System.out.println("updateShape");
     }
 
     public void bindToBudget(double remainingWire) {

@@ -42,7 +42,7 @@ public class GameViewL1 extends AnchorPane {
         AnchorPane.setLeftAnchor  (gamePane, 0.0);
         AnchorPane.setRightAnchor (gamePane, 0.0);
         getChildren().add(gamePane);
-        getChildren().add(0, wiringLayer);
+        getChildren().add(1,  wiringLayer);
 
         // --- دکمهٔ Back ---
         backButton = new Button("Back");

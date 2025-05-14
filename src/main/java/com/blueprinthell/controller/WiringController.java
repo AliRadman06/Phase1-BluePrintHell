@@ -55,7 +55,10 @@ public class WiringController {
         if( currentWireView != null ) {
             Point2D mousePt = new Point2D(event.getX(), event.getY());
             currentWire.setTempEnd(mousePt);
+            System.out.println("Mouse Dragged at: " + mousePt);
             currentWireView.updateShape();
+            System.out.println("Curve Elements after update: " + currentWireView.getCurve().getElements().size());
+
         }
     }
 
@@ -71,6 +74,10 @@ public class WiringController {
             if( p.getDirection() == Port.Direction.IN ) {
                 currentWire.setInputPort(p);
                 if( addConnection(currentWire) ) {
+                    System.out.println("Wire Start Point: " + currentWire.getStart());
+                    System.out.println("WiringLayer visible: " + wiringLayer.isVisible());
+                    System.out.println("WiringLayer children count: " + wiringLayer.getChildren().size());
+
                     currentWireView.bindToBudget(remainingWires);
                 } else {
                     wiringLayer.getChildren().remove(currentWireView.getCurve());
@@ -79,7 +86,7 @@ public class WiringController {
                 wiringLayer.getChildren().remove(currentWireView.getCurve());
             }
         } else {
-            System.out.println("mm");
+//            System.out.println("mm");
             wiringLayer.getChildren().remove(currentWireView.getCurve());
         }
 
@@ -96,5 +103,9 @@ public class WiringController {
         }
         return false;
     }
+
+   }
+
+
 
 }
