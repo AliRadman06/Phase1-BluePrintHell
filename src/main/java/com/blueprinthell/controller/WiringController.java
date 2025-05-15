@@ -63,22 +63,26 @@ public class WiringController {
     }
 
     private void onMouseReleased(MouseEvent event) {
-        if( currentWireView == null ) {
-            System.out.println("vvr");
-            return;
-        }
+        if (currentWireView == null) return;
 
         Node target = event.getPickResult().getIntersectedNode();
-        if( target != null && target.getUserData() instanceof Port p ) {
-//            System.out.println("mm");
-            if( p.getDirection() == Port.Direction.IN && canEndAt(p) ) {
-                currentWire.setInputPort(p);
-                if( addConnection(currentWire) ) {
-                    System.out.println("Wire Start Point: " + currentWire.getStart());
-                    System.out.println("WiringLayer visible: " + wiringLayer.isVisible());
-                    System.out.println("WiringLayer children count: " + wiringLayer.getChildren().size());
-
-                    currentWireView.bindToBudget(remainingWires);
+        if (target != null && target.getUserData() instanceof Port p) {
+            if (p.getDirection() == Port.Direction.IN) {
+                Port outPort = currentWire.getOutputPort();
+                if (outPort.getOwner().equals(p.getOwner())) {
+                    wiringLayer.getChildren().remove(currentWireView.getCurve());
+                }
+                else if (outPort.getShape() != p.getShape()) {
+                    wiringLayer.getChildren().remove(currentWireView.getCurve());
+                }
+                else if (canEndAt(p)) {
+                    currentWire.setInputPort(p);
+                    currentWireView.updateShape();
+                    if (addConnection(currentWire)) {
+                        currentWireView.bindToBudget(remainingWires);
+                    } else {
+                        wiringLayer.getChildren().remove(currentWireView.getCurve());
+                    }
                 } else {
                     wiringLayer.getChildren().remove(currentWireView.getCurve());
                 }
@@ -86,12 +90,11 @@ public class WiringController {
                 wiringLayer.getChildren().remove(currentWireView.getCurve());
             }
         } else {
-//            System.out.println("mm");
             wiringLayer.getChildren().remove(currentWireView.getCurve());
         }
 
         currentWireView = null;
-        currentWire = null;
+        currentWire     = null;
     }
 
     private boolean addConnection(Wire w) {
@@ -105,15 +108,12 @@ public class WiringController {
     }
 
     private boolean canStartFrom(Port out) {
-        // هیچ سیمی نباید قبلاً از این خروجی آغاز شده باشد
         return wires.stream()
                 .map(Wire::getOutputPort)
                 .noneMatch(p -> p.equals(out));
     }
 
-    /** آیا می‌توانیم به این پورت ورودی سیم متصل کنیم؟ */
     private boolean canEndAt(Port in) {
-        // هیچ سیمی نباید قبلاً به این ورودی ختم شده باشد
         return wires.stream()
                 .map(Wire::getInputPort)
                 .noneMatch(p -> p != null && p.equals(in));
