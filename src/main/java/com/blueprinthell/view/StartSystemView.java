@@ -48,6 +48,7 @@ public class StartSystemView extends AbstractDeviceView {
 
         body.setFill(Color.rgb(80, 80, 80));
         body.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+        body.setStrokeWidth(2);
 
         innerBody.setFill(Color.rgb(40, 40 ,40));
         innerBody.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());

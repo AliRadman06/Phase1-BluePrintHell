@@ -8,7 +8,7 @@ import java.util.Queue;
 /**
  * مدلِ پورتِ شبکه: IN یا OUT با صف داخلی
  */
-public class Port {
+public class  Port {
 
     public enum Direction { IN, OUT }
     public enum Shape{ SQUARE, TRIANGLE }
@@ -60,7 +60,7 @@ public class Port {
         double w = 200;
         double h = 200;
 
-        double x = baseX + (direction == Direction.OUT ? w : 0);
+        double x = baseX + (direction == Direction.OUT ? w  : 0);
         double y = baseY + relativeY * h;
 
         this.Center = new Point2D(x, y);

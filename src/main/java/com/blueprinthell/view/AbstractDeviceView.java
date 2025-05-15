@@ -66,6 +66,8 @@ public abstract class AbstractDeviceView extends Group {
         switch (p.getShape()) {
             case SQUARE -> {
                 Rectangle square = new Rectangle(x, y, size, size);
+                square.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+                square.setStrokeWidth(2);
                 square.setArcHeight(2);
                 square.setArcWidth(2);
                 square.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);
@@ -77,6 +79,8 @@ public abstract class AbstractDeviceView extends Group {
                         x + size, y + size,
                         x, y + size
                 );
+                triangle.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+                triangle.setStrokeWidth(2);
                 triangle.setFill(p.getDirection() == Port.Direction.IN ? Color.DODGERBLUE : Color.SALMON);
                 triangle.setRotate(p.getDirection() == Port.Direction.IN ? 270 : 90);
                 shape = triangle;

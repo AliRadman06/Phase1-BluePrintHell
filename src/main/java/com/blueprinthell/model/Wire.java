@@ -46,4 +46,12 @@ public class Wire {
         return calculateLength() <= remainingWire;
     }
 
+    public Port getInputPort() {
+        return inputPort;
+    }
+
+    public Port getOutputPort() {
+        return outputPort;
+    }
+
 }

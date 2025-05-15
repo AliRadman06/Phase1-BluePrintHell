@@ -18,7 +18,7 @@ public class GameViewL1 extends AnchorPane {
     private final Canvas gridCanvas;
     private final Button backButton;
     private Pane wiringLayer = new Pane();
-    public static final double TOTAL_WIRE = 1000.0;  // کل طول سیم مجاز
+    public static final double TOTAL_WIRE = 50000.0;  // کل طول سیم مجاز
 
 
 

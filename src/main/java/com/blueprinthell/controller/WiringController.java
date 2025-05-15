@@ -41,7 +41,7 @@ public class WiringController {
     private void onPortMousePressed(MouseEvent event) {
         Port p = (Port)((Node)event.getSource()).getUserData();
 
-        if (p.getDirection() == Port.Direction.OUT) {
+        if (p.getDirection() == Port.Direction.OUT && canStartFrom(p)) {
             System.out.println("Start wiring on port: " + p.getOwner().getId());
             currentWire = new Wire(p);
             currentWireView = new WireView(currentWire);
@@ -71,7 +71,7 @@ public class WiringController {
         Node target = event.getPickResult().getIntersectedNode();
         if( target != null && target.getUserData() instanceof Port p ) {
 //            System.out.println("mm");
-            if( p.getDirection() == Port.Direction.IN ) {
+            if( p.getDirection() == Port.Direction.IN && canEndAt(p) ) {
                 currentWire.setInputPort(p);
                 if( addConnection(currentWire) ) {
                     System.out.println("Wire Start Point: " + currentWire.getStart());
@@ -104,8 +104,19 @@ public class WiringController {
         return false;
     }
 
-   }
+    private boolean canStartFrom(Port out) {
+        // هیچ سیمی نباید قبلاً از این خروجی آغاز شده باشد
+        return wires.stream()
+                .map(Wire::getOutputPort)
+                .noneMatch(p -> p.equals(out));
+    }
 
-
+    /** آیا می‌توانیم به این پورت ورودی سیم متصل کنیم؟ */
+    private boolean canEndAt(Port in) {
+        // هیچ سیمی نباید قبلاً به این ورودی ختم شده باشد
+        return wires.stream()
+                .map(Wire::getInputPort)
+                .noneMatch(p -> p != null && p.equals(in));
+    }
 
 }
