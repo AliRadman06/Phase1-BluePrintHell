@@ -84,6 +84,10 @@ public class WiringController {
                 else if (canEndAt(p)) {
                     currentWire.setInputPort(p);
                     currentWireView.updateShape();
+                    if (!wiringLayer.getChildren().contains(currentWireView.getCurve())) {
+                        wiringLayer.getChildren().add(currentWireView.getCurve());
+                    }
+                    currentWireView.getCurve().setUserData(currentWire);
                     if (addConnection(currentWire)) {
                         currentWireView.bindToBudget(remainingWires);
                     } else {

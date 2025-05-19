@@ -2,6 +2,8 @@ package com.blueprinthell.view;
 
 import com.blueprinthell.controller.PacketController;
 import com.blueprinthell.model.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -10,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ public class StartSystemView extends AbstractDeviceView {
     private Circle lamp;
     private PacketController packetController;
     private Pane wiringLayer;
+    private Timeline autoSendTimeline;
+
 
 
     public StartSystemView(NetworkDevice model) {
@@ -36,17 +41,32 @@ public class StartSystemView extends AbstractDeviceView {
 
     @Override
     protected void initializeGraphics() {
+        //body
         body = new Rectangle(0, 0, 200, 200);
+        body.setArcWidth(10);
+        body.setArcHeight(10);
+        body.setFill(Color.rgb(80, 80, 80));
+        body.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
+        body.setStrokeWidth(2);
+
+
+        //innerBody
         innerBody = new Pane();
         innerBody.setLayoutX(5);
         innerBody.setLayoutY(50);
         innerBody.setPrefWidth(190);
         innerBody.setPrefHeight(140);
+        innerBody.setStyle("-fx-background-color: rgb(40, 40, 40);" +
+                "-fx-border-color: rgb(20, 20, 20);" +
+                "-fx-background-radius: 10" );
 
+        //lamp
         lamp = new Circle(180, 25, 15);
         lamp.setFill(Color.rgb(40, 40, 40));
         lamp.setStroke(Color.rgb(40, 40, 40).darker().darker().darker());
 
+
+        //startButton
         startButton = new Button("Start");
         startButton.setTextFill(Color.WHITE);
         startButton.setLayoutX(5);
@@ -55,19 +75,7 @@ public class StartSystemView extends AbstractDeviceView {
         startButton.setStyle("-fx-background-radius: 5;" +
                 "-fx-background-color: rgba(40,40,40,1);"
                 );
-        startButton.setOnAction(e -> sendPacket());
-
-        body.setArcWidth(10);
-        body.setArcHeight(10);
-
-        body.setFill(Color.rgb(80, 80, 80));
-        body.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
-        body.setStrokeWidth(2);
-
-        innerBody.setStyle("-fx-background-color: rgb(40, 40, 40);" +
-                "-fx-border-color: rgb(20, 20, 20);" +
-                "-fx-background-radius: 10" );
-
+        startButton.setOnAction(e -> startAutoSendPackets());
 
 
         getChildren().addAll(body, innerBody, startButton, lamp);
@@ -77,56 +85,42 @@ public class StartSystemView extends AbstractDeviceView {
 
     }
 
-    public void sendPacket() {
-        System.out.println("🔵 دکمه استارت کلیک شد");
+    private void startAutoSendPackets() {
+        if (packetController == null || wiringLayer == null) return;
 
-        if (packetController == null) {
-            System.out.println("⚠️ packetController = null");
-            return;
-        }
-        if (wiringLayer == null) {
-            System.out.println("⚠️ wiringLayer = null");
-            return;
-        }
+        if (autoSendTimeline != null && autoSendTimeline.getStatus() == Timeline.Status.RUNNING) return;
+
+        autoSendTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> sendPacket()));
+        autoSendTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoSendTimeline.play();
+    }
+
+    public void sendPacket() {
+        if (packetController == null || wiringLayer == null) return;
 
         StartSystem startSystem = (StartSystem) model;
         if (startSystem.getPacketBuffer().isEmpty()) {
-            System.out.println("⚠️ packetBuffer خالی است");
+            if (autoSendTimeline != null) autoSendTimeline.stop();
             return;
         }
 
         Packet packet = startSystem.getPacketBuffer().peek();
-        if (packet == null) {
-            System.out.println("⚠️ packet == null");
-            return;
-        }
+        if (packet == null) return;
 
         for (Port outPort : startSystem.getOutPorts()) {
-            System.out.println("⏩ بررسی پورت " + outPort.getShape());
-
             if (outPort.getShape().toString().equals(packet.getShape().toString())) {
-                System.out.println("✅ پورت سازگار پیدا شد");
-
                 Wire wire = findWireConnectedTo(outPort);
-                if (wire == null) {
-                    System.out.println("❌ سیمی برای پورت پیدا نشد");
-                    continue;
-                }
-
-                System.out.println("✅ سیم پیدا شد");
+                if (wire == null) continue;
 
                 List<Point2D> path = wire.flatten(40);
                 packet.setPath(path);
                 packet.setSpeed(100);
+                packet.setDestinationPort(wire.getInputPort()); // ✅ این خط
 
                 packetController.addPacket(packet, new PacketView(packet));
-                System.out.println("🚀 پکت ارسال شد");
-
                 startSystem.getPacketBuffer().poll();
                 renderBufferedPackets();
                 break;
-            } else {
-                System.out.println("❌ پورت ناسازگار");
             }
         }
     }

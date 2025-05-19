@@ -16,6 +16,9 @@ public class Packet {
     private double speed;
     private double noise = 0.0;
 
+    private Port destinationPort; // ✅ مقصد نهایی پکت
+
+
     public Packet(ShapeType shape, double size, List<Point2D> path, double initialSpeed) {
         this.shape = shape;
         this.size = size;
@@ -40,6 +43,8 @@ public class Packet {
         }
     }
 
+
+
     public Point2D getCurrentPosition() {
         if (currentIndex >= path.size() - 1) {
             return path.get(path.size() - 1);
@@ -59,4 +64,20 @@ public class Packet {
     public double getSpeed()      { return speed; }
     public void   setSpeed(double speed) { this.speed = speed; }
     public void setPath(List<Point2D> path) { this.path = path; }
+    public List<Point2D> getPath() { return path; }
+    public int getCurrentIndex() { return currentIndex; }
+    public void setDestinationPort(Port port) {
+        this.destinationPort = port;
+    }
+
+    public Port getDestinationPort() {
+        return destinationPort;
+    }
+
+    public boolean isFinished() {
+        return currentIndex >= path.size() - 1;
+    }
+
+
+
 }

@@ -141,6 +141,8 @@ public class GameViewL1 extends AnchorPane {
         AbstractDeviceView v3 = DeviceViewFactory.create(e1);
         gamePane.getChildren().add(v3);
 
+
+
     }
 
     private void drawGrid() {

@@ -24,6 +24,8 @@ public class PacketView {
                     20, 0,
                     10, 20
             );
+            tri.setRotate(180);
+            tri.setFill(Color.ORANGE);
             node = tri;
         }
         updatePosition();

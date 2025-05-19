@@ -1,8 +1,10 @@
 package com.blueprinthell.controller;
 
 import com.blueprinthell.model.Packet;
+import com.blueprinthell.model.ProcessingSystem;
 import com.blueprinthell.view.PacketView;
 
+import com.blueprinthell.view.ProcessingSystemView;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
@@ -17,6 +19,7 @@ public class PacketController {
     private final List<Packet> packets = new ArrayList<>();
     private final List<PacketView> views = new ArrayList<>();
     private final ScheduledExecutorService executor;
+    private Packet packet;
 
 
     public PacketController(Pane displayLayer) {
@@ -33,11 +36,41 @@ public class PacketController {
     public void start() {
         executor.scheduleAtFixedRate(() -> {
             double dt = 1.0 / 60;
-            // حرکت مدل
-            for (Packet p : packets) {
+
+            List<Packet> toRemovePackets = new ArrayList<>();
+            List<PacketView> toRemoveViews = new ArrayList<>();
+
+            for (int i = 0; i < packets.size(); i++) {
+                Packet p = packets.get(i);
+                PacketView v = views.get(i);
+
                 p.advance(p.getSpeed() * dt);
+
+                if (p.isFinished()) {
+                    // حذف از صحنه و صف
+                    toRemovePackets.add(p);
+                    toRemoveViews.add(v);
+
+                    var dest = p.getDestinationPort();
+                    if (dest != null && dest.getOwner() instanceof ProcessingSystem ps) {
+                        ps.addToBuffer(p);
+
+                        Platform.runLater(() -> {
+                            displayLayer.getChildren().forEach(node -> {
+                                if (node instanceof ProcessingSystemView view && view.getModel().equals(ps)) {
+                                    view.renderBufferedPackets();
+                                }
+                            });
+                        });
+                    }
+
+                    Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
+                }
             }
-            // به‌روزرسانی ویو در ترد FX
+
+            packets.removeAll(toRemovePackets);
+            views.removeAll(toRemoveViews);
+
             Platform.runLater(() -> {
                 for (PacketView v : views) {
                     v.updatePosition();
@@ -46,9 +79,14 @@ public class PacketController {
         }, 0, 16, TimeUnit.MILLISECONDS);
     }
 
+
     public void stop() {
         executor.shutdown();
     }
+
+
+
+
 
 
 

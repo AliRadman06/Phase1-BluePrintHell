@@ -38,7 +38,7 @@ public abstract class AbstractDeviceView extends Group {
 
     protected abstract double getBodyWidth();
     protected abstract double getBodyHeight();
-    protected NetworkDevice getModel() {
+    public NetworkDevice getModel() {
         return model;
     }
     protected void drawPorts() {
