@@ -1,8 +1,8 @@
 package com.blueprinthell.view;
 
 import com.blueprinthell.model.NetworkDevice;
+import com.blueprinthell.model.StartSystem;
 
-/** کارخانهٔ ساخت View بر اساس نوع مدل */
 public class DeviceViewFactory {
     public static AbstractDeviceView create(NetworkDevice model) {
         return switch (model.getType()) {

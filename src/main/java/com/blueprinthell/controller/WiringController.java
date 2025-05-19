@@ -1,14 +1,17 @@
 package com.blueprinthell.controller;
 
+import com.blueprinthell.model.Packet;
 import com.blueprinthell.model.Port;
 import com.blueprinthell.model.Wire;
 import com.blueprinthell.view.AbstractDeviceView;
 import com.blueprinthell.view.GameViewL1;
+import com.blueprinthell.view.PacketView;
 import com.blueprinthell.view.WireView;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import com.blueprinthell.controller.PacketController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +22,12 @@ public class WiringController {
     private double remainingWires;
     private Wire currentWire;
     private WireView currentWireView;
+    private final PacketController packetController;
+
 
     public WiringController(GameViewL1 view) {
         this.wiringLayer = view.getWiringLayer();
+        this.packetController = view.getPacketController(); // ← همین
         this.remainingWires = view.TOTAL_WIRE;
         initEventHandlers(view);
     }

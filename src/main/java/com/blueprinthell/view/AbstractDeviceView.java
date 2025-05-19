@@ -35,9 +35,12 @@ public abstract class AbstractDeviceView extends Group {
         setLayoutY(model.getY());
     }
 
+
     protected abstract double getBodyWidth();
     protected abstract double getBodyHeight();
-
+    protected NetworkDevice getModel() {
+        return model;
+    }
     protected void drawPorts() {
         double size   = 20;
         double offset = 1;
@@ -148,4 +151,7 @@ public abstract class AbstractDeviceView extends Group {
 //        System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
     }
 
+    protected Object model() {
+        return model;
+    }
 }

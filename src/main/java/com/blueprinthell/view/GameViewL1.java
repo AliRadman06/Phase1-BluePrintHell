@@ -1,10 +1,9 @@
 package com.blueprinthell.view;
 
-import com.blueprinthell.model.NetworkDevice;
-import com.blueprinthell.model.Port;
-import com.blueprinthell.model.SystemFactory;
-import com.blueprinthell.model.SystemType;
+import com.blueprinthell.controller.PacketController;
+import com.blueprinthell.model.*;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -13,11 +12,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameViewL1 extends AnchorPane {
     private final AnchorPane gamePane;
     private final Canvas gridCanvas;
     private final Button backButton;
     private Pane wiringLayer = new Pane();
+    private final PacketController packetController;
     public static final double TOTAL_WIRE = 50000.0;  // کل طول سیم مجاز
 
 
@@ -43,6 +46,9 @@ public class GameViewL1 extends AnchorPane {
         AnchorPane.setRightAnchor (gamePane, 0.0);
         getChildren().add(gamePane);
         getChildren().add(1,  wiringLayer);
+        packetController = new PacketController(gamePane);
+        packetController.start();
+
 
         // --- دکمهٔ Back ---
         backButton = new Button("Back");
@@ -57,9 +63,11 @@ public class GameViewL1 extends AnchorPane {
 
 
         // — نمونهٔ StartSystem —
-        NetworkDevice s1 = SystemFactory.createSystem(SystemType.START, "s1", 200, 200);
+        StartSystem s1 = (StartSystem) SystemFactory.createSystem(SystemType.START, "s1", 200, 200);
         s1.setX(200);
         s1.setY(200);
+
+
         Port s1out1 = new Port(s1, Port.Direction.OUT, Port.Shape.SQUARE);
         Port s1out2 = new Port(s1, Port.Direction.OUT, Port.Shape.TRIANGLE);
 
@@ -69,9 +77,21 @@ public class GameViewL1 extends AnchorPane {
         s1.getOutPorts().add(s1out1);
         s1.getOutPorts().add(s1out2);
 
+        s1.setSquarePacket(3);
+        s1.setTrianglePacket(2);
+
+        List<Point2D> dummyPath = new ArrayList<>();
+        dummyPath.add(new Point2D(0, 0));
+        dummyPath.add(new Point2D(100, 0));
+        s1.generateInitialPackets(dummyPath);
+
+
         s1.initialize();
 
-        AbstractDeviceView v1 = DeviceViewFactory.create(s1);
+        StartSystemView v1 = (StartSystemView) DeviceViewFactory.create(s1);
+        v1.setPacketController(this.packetController);
+        v1.setWiringLayer(this.wiringLayer);
+        v1.renderBufferedPackets();
         gamePane.getChildren().add(v1);
 
         // — نمونهٔ ProcessingSystem —
@@ -158,5 +178,8 @@ public class GameViewL1 extends AnchorPane {
         return gamePane;
     }
 
+    public PacketController getPacketController() {
+        return packetController;
+    }
 
 }
