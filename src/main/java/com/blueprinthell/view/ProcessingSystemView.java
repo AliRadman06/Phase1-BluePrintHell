@@ -88,4 +88,6 @@ public class ProcessingSystemView extends AbstractDeviceView {
     protected double getBodyHeight() {
         return body.getHeight();
     }
+
+
 }

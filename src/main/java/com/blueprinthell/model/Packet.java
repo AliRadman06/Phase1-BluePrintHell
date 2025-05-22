@@ -16,7 +16,7 @@ public class Packet {
     private double speed;
     private double noise = 0.0;
 
-    private Port destinationPort; // ✅ مقصد نهایی پکت
+    private Port destinationPort;
 
 
     public Packet(ShapeType shape, double size, List<Point2D> path, double initialSpeed) {
@@ -42,8 +42,6 @@ public class Packet {
             }
         }
     }
-
-
 
     public Point2D getCurrentPosition() {
         if (currentIndex >= path.size() - 1) {
@@ -78,6 +76,8 @@ public class Packet {
         return currentIndex >= path.size() - 1;
     }
 
-
-
+    public void resetProgress() {
+        this.currentIndex = 0;
+        this.subProgress = 0.0;
+    }
 }

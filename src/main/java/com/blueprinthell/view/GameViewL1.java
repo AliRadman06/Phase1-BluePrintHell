@@ -47,6 +47,7 @@ public class GameViewL1 extends AnchorPane {
         getChildren().add(gamePane);
         getChildren().add(1,  wiringLayer);
         packetController = new PacketController(gamePane);
+        packetController.setWiringLayer(wiringLayer);
         packetController.start();
 
 

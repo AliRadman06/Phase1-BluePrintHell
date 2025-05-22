@@ -35,6 +35,8 @@ public class PacketView {
         Point2D pos = model.getCurrentPosition();
         node.setTranslateX(pos.getX());
         node.setTranslateY(pos.getY());
+        System.out.println("📍 پکت آپدیت شد در موقعیت: " + model.getCurrentPosition());
+
     }
 
     public Node getNode() {
