@@ -48,7 +48,6 @@ public class WiringController {
         Port p = (Port)((Node)event.getSource()).getUserData();
 
         if (p.getDirection() == Port.Direction.OUT && canStartFrom(p)) {
-            System.out.println("Start wiring on port: " + p.getOwner().getId());
             currentWire = new Wire(p);
             currentWireView = new WireView(currentWire);
             wiringLayer.getChildren().add(currentWireView.getCurve());
@@ -61,9 +60,7 @@ public class WiringController {
         if( currentWireView != null ) {
             Point2D mousePt = new Point2D(event.getX(), event.getY());
             currentWire.setTempEnd(mousePt);
-            System.out.println("Mouse Dragged at: " + mousePt);
             currentWireView.updateShape();
-            System.out.println("Curve Elements after update: " + currentWireView.getCurve().getElements().size());
 
         }
     }
@@ -90,6 +87,7 @@ public class WiringController {
                     currentWireView.getCurve().setUserData(currentWire);
                     if (addConnection(currentWire)) {
                         currentWireView.bindToBudget(remainingWires);
+                        System.out.println(remainingWires);
                     } else {
                         wiringLayer.getChildren().remove(currentWireView.getCurve());
                     }
@@ -115,6 +113,10 @@ public class WiringController {
             return true;
         }
         return false;
+    }
+
+    public double getRemainingWires() {
+        return remainingWires;
     }
 
     private boolean canStartFrom(Port out) {

@@ -43,7 +43,7 @@ public class EndSystemView extends AbstractDeviceView {
                 System.out.println("Hovered SYSTEM: " + model.getId())
         );
 
-        drawPorts(); // رسمِ پورت‌ها پس از بدنه
+        drawPorts();
     }
 
     @Override

@@ -18,7 +18,6 @@ public class MainMenuController {
 
     @FXML
     private void initialize() {
-        // Bind background image to pane size
         gamePane.setPrefHeight(Constants.SCREEN_HEIGHT);
         gamePane.setPrefWidth(Constants.SCREEN_WIDTH);
         backgroundImage.fitWidthProperty().bind(gamePane.widthProperty());

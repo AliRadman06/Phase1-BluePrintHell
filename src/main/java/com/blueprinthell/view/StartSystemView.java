@@ -23,7 +23,8 @@ public class StartSystemView extends AbstractDeviceView {
     private Circle lamp;
     private PacketController packetController;
     private Pane wiringLayer;
-    private Timeline autoSendTimeline;
+    private Timeline squareTimeline;
+    private Timeline triangleTimeline;
 
 
 
@@ -56,9 +57,12 @@ public class StartSystemView extends AbstractDeviceView {
         innerBody.setLayoutY(50);
         innerBody.setPrefWidth(190);
         innerBody.setPrefHeight(140);
-        innerBody.setStyle("-fx-background-color: rgb(40, 40, 40);" +
-                "-fx-border-color: rgb(20, 20, 20);" +
-                "-fx-background-radius: 10" );
+        innerBody.setStyle("""
+                -fx-background-color: rgb(40, 40, 40); 
+                -fx-border-color: rgb(20, 20, 20); 
+                -fx-background-radius: 10;
+                -fx-border-radius: 10;
+                """ );
 
         //lamp
         lamp = new Circle(180, 25, 15);
@@ -74,7 +78,7 @@ public class StartSystemView extends AbstractDeviceView {
         startButton.setPrefWidth(70);
         startButton.setStyle("-fx-background-radius: 5;" +
                 "-fx-background-color: rgba(40,40,40,1);"
-                );
+        );
         startButton.setOnAction(e -> startAutoSendPackets());
 
 
@@ -88,42 +92,48 @@ public class StartSystemView extends AbstractDeviceView {
     private void startAutoSendPackets() {
         if (packetController == null || wiringLayer == null) return;
 
-        if (autoSendTimeline != null && autoSendTimeline.getStatus() == Timeline.Status.RUNNING) return;
+        if (squareTimeline == null) {
+            squareTimeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> sendPacket(Packet.ShapeType.SQUARE)));
+            squareTimeline.setCycleCount(Timeline.INDEFINITE);
+            squareTimeline.play();
+        }
 
-        autoSendTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> sendPacket()));
-        autoSendTimeline.setCycleCount(Timeline.INDEFINITE);
-        autoSendTimeline.play();
+        if (triangleTimeline == null) {
+            triangleTimeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> sendPacket(Packet.ShapeType.TRIANGLE)));
+            triangleTimeline.setCycleCount(Timeline.INDEFINITE);
+            triangleTimeline.play();
+        }
     }
 
-    public void sendPacket() {
+
+    public void sendPacket(Packet.ShapeType type) {
         if (packetController == null || wiringLayer == null) return;
 
         StartSystem startSystem = (StartSystem) model;
-        if (startSystem.getPacketBuffer().isEmpty()) {
-            if (autoSendTimeline != null) autoSendTimeline.stop();
-            return;
-        }
+        Packet target = startSystem.getPacketBuffer().stream()
+                .filter(p -> p.getShape() == type)
+                .findFirst().orElse(null);
 
-        Packet packet = startSystem.getPacketBuffer().peek();
-        if (packet == null) return;
+        if (target == null) return;
 
         for (Port outPort : startSystem.getOutPorts()) {
-            if (outPort.getShape().toString().equals(packet.getShape().toString())) {
+            if (outPort.getShape().toString().equals(type.toString())) {
                 Wire wire = findWireConnectedTo(outPort);
                 if (wire == null) continue;
 
                 List<Point2D> path = wire.flatten(40);
-                packet.setPath(path);
-                packet.setSpeed(100);
-                packet.setDestinationPort(wire.getInputPort()); // ✅ این خط
+                target.setPath(path);
+                target.setSpeed(100);
+                target.setDestinationPort(wire.getInputPort());
 
-                packetController.addPacket(packet, new PacketView(packet));
-                startSystem.getPacketBuffer().poll();
+                packetController.addPacket(target, new PacketView(target));
+                startSystem.getPacketBuffer().remove(target);
                 renderBufferedPackets();
                 break;
             }
         }
     }
+
 
 
     private Wire findWireConnectedTo(Port port) {
@@ -146,6 +156,8 @@ public class StartSystemView extends AbstractDeviceView {
             if (p.getShape() == Packet.ShapeType.SQUARE) {
                 Rectangle r = new Rectangle(20, 20);
                 r.setFill(Color.YELLOW);
+                r.setStroke(Color.rgb(140, 112, 5));
+                r.setStrokeWidth(2);
                 r.setLayoutX(10);
                 r.setLayoutY(y);
                 innerBody.getChildren().add(r);
@@ -156,6 +168,8 @@ public class StartSystemView extends AbstractDeviceView {
                         10.0, 20.0
                 );
                 tri.setFill(Color.ORANGE);
+                tri.setStroke(Color.rgb(152, 82, 5));
+                tri.setStrokeWidth(2);
                 tri.setRotate(180 );
                 tri.setLayoutX(10);
                 tri.setLayoutY(y);

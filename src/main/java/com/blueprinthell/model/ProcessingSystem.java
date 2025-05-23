@@ -3,7 +3,6 @@ package com.blueprinthell.model;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/** سیستم پردازش: دریافت و پردازش Packet */
 public class ProcessingSystem extends NetworkDevice {
 
     private final Queue<Packet> packetBuffer = new LinkedList<>();
@@ -33,7 +32,6 @@ public class ProcessingSystem extends NetworkDevice {
 
     @Override
     public void initialize() {
-        // TODO: آماده‌سازی اولیه
     }
 
     @Override

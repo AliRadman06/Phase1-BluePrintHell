@@ -62,6 +62,8 @@ public class MainMenuView extends AnchorPane {
                 -fx-background-color: rgba(2,3,14,0.6);
                 -fx-text-fill: white;
                 -fx-background-radius: 30;
+                -fx-border-radius: 30;
+                -fx-border-color: white ;
             """);
             vb.getChildren().add(b);
 

@@ -1,5 +1,6 @@
 package com.blueprinthell.model;
 
+import com.blueprinthell.logic.GameStats;
 import javafx.geometry.Point2D;
 
 import java.util.List;
@@ -7,7 +8,8 @@ import java.util.List;
 public class Packet {
     public enum ShapeType { SQUARE, TRIANGLE }
     private ShapeType shape;
-    private double size; // 2 یا 3
+    private double size;
+    private boolean alive = true;
 
     private List<Point2D> path;
     private int currentIndex = 0;
@@ -17,13 +19,16 @@ public class Packet {
     private double noise = 0.0;
 
     private Port destinationPort;
+    private static int counter = 0;
+    private final int id;
+    private static final double DETECTION_RADIUS = 30.0;
+    private double deviation = 0;
 
 
-    public Packet(ShapeType shape, double size, List<Point2D> path, double initialSpeed) {
+    public Packet(ShapeType shape, double size) {
         this.shape = shape;
         this.size = size;
-        this.path = path;
-        this.speed = initialSpeed;
+        this.id = counter++;
     }
 
     public void advance(double dist) {
@@ -40,6 +45,7 @@ public class Packet {
                 currentIndex++;
                 subProgress = 0;
             }
+
         }
     }
 
@@ -56,7 +62,11 @@ public class Packet {
     }
 
     public ShapeType getShape() { return shape; }
-    public double getSize()       { return size;  }
+    public double getSize()       { return switch (shape) {
+        case SQUARE -> 2.0;
+        case TRIANGLE -> 3.0;
+    };
+    }
     public double getNoise()      { return noise; }
     public void   addNoise(double delta) { noise += delta; }
     public double getSpeed()      { return speed; }
@@ -67,9 +77,18 @@ public class Packet {
     public void setDestinationPort(Port port) {
         this.destinationPort = port;
     }
+    public int getId() { return id; }
+
+    public double getRadiusOfDetection() {
+        return DETECTION_RADIUS;
+    }
 
     public Port getDestinationPort() {
         return destinationPort;
+    }
+
+    public double getDeviation() {
+        return deviation;
     }
 
     public boolean isFinished() {
@@ -79,5 +98,29 @@ public class Packet {
     public void resetProgress() {
         this.currentIndex = 0;
         this.subProgress = 0.0;
+    }
+
+    public void increaseNoise(double amount) {
+        this.noise += amount;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void kill() {
+        if (!alive) return;
+        alive = false;
+        GameStats.addPacketLoss();
+    }
+
+
+    public void addDeviation(double delta) {
+        this.deviation += delta;
+        double maxDeviation = getSize() * 10.0;
+
+        if (deviation >= maxDeviation) {
+            kill();
+        }
     }
 }

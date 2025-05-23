@@ -1,5 +1,6 @@
 package com.blueprinthell.controller;
 
+import com.blueprinthell.util.StageProvider;
 import com.blueprinthell.view.MainMenuView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,7 @@ import java.net.URL;
 public class Game extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
+        StageProvider.setStage(primaryStage); // 👈 ثبت استیج
 
         MainMenuView mainMenuView = new MainMenuView();
 
@@ -26,6 +28,7 @@ public class Game extends Application {
         primaryStage.show();
 
     }
+
 
     public static void main(String[] args) {
         launch(args);

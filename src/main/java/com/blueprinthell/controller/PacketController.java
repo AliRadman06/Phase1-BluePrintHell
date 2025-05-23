@@ -1,9 +1,14 @@
-// PacketController.java (بررسی و عبور پکت از سیستم‌ها)
 package com.blueprinthell.controller;
 
+import com.blueprinthell.logic.GameStats;
+import com.blueprinthell.logic.PacketCollisionDetector;
 import com.blueprinthell.model.*;
+import com.blueprinthell.util.StageProvider;
+import com.blueprinthell.view.GameOverView;
+import com.blueprinthell.view.HUDView;
 import com.blueprinthell.view.PacketView;
 import com.blueprinthell.view.ProcessingSystemView;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -19,6 +24,11 @@ public class PacketController {
     private final List<Packet> packets = new ArrayList<>();
     private final List<PacketView> views = new ArrayList<>();
     private final ScheduledExecutorService executor;
+    private final PacketCollisionDetector collisionDetector = new PacketCollisionDetector();
+    private HUDView hudView;
+
+
+
 
     public PacketController(Pane displayLayer) {
         this.displayLayer = displayLayer;
@@ -32,15 +42,17 @@ public class PacketController {
     public void addPacket(Packet packet, PacketView view) {
         packets.add(packet);
         views.add(view);
-        System.out.println("🔵 پکت اضافه شد به کنترلر: " + packet);
         Platform.runLater(() -> displayLayer.getChildren().add(view.getNode()));
     }
+
     public void start() {
         executor.scheduleAtFixedRate(() -> {
             double dt = 1.0 / 60;
 
+            checkAndForwardBufferedPackets();
+
             List<Packet> toRemovePackets = new ArrayList<>();
-            List<PacketView> toRemoveViews = new ArrayList<>();
+            List<PacketView> toRemoveViews   = new ArrayList<>();
 
             for (int i = 0; i < packets.size(); i++) {
                 Packet p = packets.get(i);
@@ -48,54 +60,61 @@ public class PacketController {
 
                 p.advance(p.getSpeed() * dt);
 
+                if (!p.isAlive()) {
+                    toRemovePackets.add(p);
+                    toRemoveViews.add(v);
+                    Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
+                    continue;
+                }
+
                 if (p.isFinished()) {
                     Port dest = p.getDestinationPort();
 
                     if (dest != null && dest.getOwner() instanceof ProcessingSystem ps) {
-                        System.out.println("📍 پکت به مقصد رسید: " + p);
 
                         List<Wire> allWires = getAllWires();
                         boolean forwarded = false;
 
                         for (Port out : ps.getOutPorts()) {
-                            if (!out.getShape().toString().equals(p.getShape().toString())) continue;
+                            if (!out.getShape().toString().equals(p.getShape().toString()))
+                                continue;
 
                             Wire next = allWires.stream()
                                     .filter(w -> w.getOutputPort().equals(out))
                                     .findFirst().orElse(null);
 
                             if (next != null) {
-                                System.out.println("➡️ سیم خروجی مناسب پیدا شد، پکت ادامه می‌دهد");
-
-                                Packet forwardedPacket = new Packet(p.getShape(), p.getSize(), next.flatten(40), 100);
-                                forwardedPacket.setDestinationPort(next.getInputPort());
-
-                                addPacket(forwardedPacket, new PacketView(forwardedPacket));
+                                p.resetProgress();
+                                p.setPath(next.flatten(40));
+                                p.setSpeed(50);
+                                p.setDestinationPort(next.getInputPort());
+                                removePacket(p);
+                                addPacket(p, new PacketView(p));
 
                                 Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
-                                toRemovePackets.add(p);
-                                toRemoveViews.add(v);
                                 forwarded = true;
                                 break;
                             }
                         }
 
                         if (!forwarded) {
-                            System.out.println("❌ هیچ پورت خروجی آزاد پیدا نشد");
                             ps.addToBuffer(p);
-                            System.out.println("🟡 پکت وارد بافر پردازش شد: " + ps.getId());
+
+                            toRemovePackets.add(p);
+                            toRemoveViews.add(v);
+                            Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
+
                             Platform.runLater(() -> {
                                 for (Node node : displayLayer.getChildren()) {
-                                    if (node instanceof ProcessingSystemView view && view.getModel().equals(ps)) {
+                                    if (node instanceof ProcessingSystemView view
+                                            && view.getModel().equals(ps)) {
                                         view.renderBufferedPackets();
                                     }
                                 }
                             });
                         }
                     }
-
-                    // فقط پاک نکن اگر پکت forward نشده بود
-                    if (!packets.contains(p)) {
+                    else {
                         toRemovePackets.add(p);
                         toRemoveViews.add(v);
                         Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
@@ -111,12 +130,54 @@ public class PacketController {
                     v.updatePosition();
                 }
             });
+            collisionDetector.update(packets, views);
+            if (GameStats.isGameOver()) {
+                stop();
+                Platform.runLater(() -> {
+                    GameOverView.showOverlay(StageProvider.getStage().getScene());
+                });
+            }
+
         }, 0, 16, TimeUnit.MILLISECONDS);
     }
 
-
     public void stop() {
         executor.shutdown();
+    }
+
+    private void checkAndForwardBufferedPackets() {
+        List<Wire> allWires = getAllWires();
+
+        for (Wire wire : allWires) {
+            if (wire.getOutputPort().getOwner() instanceof ProcessingSystem ps) {
+                Iterator<Packet> it = ps.getPacketBuffer().iterator();
+
+                while (it.hasNext()) {
+                    Packet p = it.next();
+                    if (!wire.getOutputPort().getShape().toString()
+                            .equals(p.getShape().toString())) {
+                        continue;
+                    }
+
+                    p.resetProgress();
+                    p.setPath(wire.flatten(40));
+                    p.setSpeed(100);
+                    p.setDestinationPort(wire.getInputPort());
+                    addPacket(p, new PacketView(p));
+
+                    it.remove();
+
+                    Platform.runLater(() -> {
+                        for (Node node : displayLayer.getChildren()) {
+                            if (node instanceof ProcessingSystemView view
+                                    && view.getModel().equals(ps)) {
+                                view.renderBufferedPackets();
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     private List<Wire> getAllWires() {
@@ -130,23 +191,18 @@ public class PacketController {
         return wires;
     }
 
-    private Wire findWireByInputPort(Port port) {
-        Pane layer = (wiringLayer != null) ? wiringLayer : displayLayer;
-        for (Node node : layer.getChildren()) {
-            if (node.getUserData() instanceof Wire wire) {
-                if (wire.getInputPort().equals(port)) return wire;
-            }
+    public void removePacket(Packet p) {
+        int index = packets.indexOf(p);
+        if (index != -1) {
+            packets.remove(index);
+            PacketView view = views.remove(index);
+            Platform.runLater(() -> displayLayer.getChildren().remove(view.getNode()));
         }
-        return null;
     }
 
-    private Wire findWireConnectedTo(Port port) {
-        Pane layer = (wiringLayer != null) ? wiringLayer : displayLayer;
-        for (Node node : layer.getChildren()) {
-            if (node.getUserData() instanceof Wire wire) {
-                if (wire.getOutputPort().equals(port)) return wire;
-            }
-        }
-        return null;
+    public void setHUDView(HUDView hudView) {
+        this.hudView = hudView;
     }
+
+
 }

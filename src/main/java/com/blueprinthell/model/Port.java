@@ -5,10 +5,10 @@ import javafx.geometry.Point2D;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/**
- * مدلِ پورتِ شبکه: IN یا OUT با صف داخلی
- */
+
 public class  Port {
+
+
 
     public enum Direction { IN, OUT }
     public enum Shape{ SQUARE, TRIANGLE }
@@ -27,6 +27,8 @@ public class  Port {
         this.shape  = shape;
     }
 
+
+
     public Direction getDirection() { return direction; }
 
     public boolean enqueue(Packet p) {
@@ -36,10 +38,6 @@ public class  Port {
 
     public Packet dequeue() {
         return buffer.poll();
-    }
-
-    public Shape getShape() {
-        return shape;
     }
 
     public double getRelativeY() {
@@ -69,6 +67,8 @@ public class  Port {
     public Point2D getCenter() {
         return Center;
     }
+
+    public Shape getShape() { return shape; }
 
 
 }

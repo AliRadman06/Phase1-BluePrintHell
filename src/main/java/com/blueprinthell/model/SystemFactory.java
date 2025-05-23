@@ -1,6 +1,5 @@
 package com.blueprinthell.model;
 
-/** کارخانهٔ ساختِ مدل‌های سیستم */
 public class SystemFactory {
     public static NetworkDevice createSystem(SystemType type,
                                              String id,

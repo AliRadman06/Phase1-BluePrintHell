@@ -38,7 +38,6 @@ public class WireView {
                 p3.getX(), p3.getY()
         ));
 
-//        System.out.println("updateShape");
     }
 
     public void bindToBudget(double remainingWire) {

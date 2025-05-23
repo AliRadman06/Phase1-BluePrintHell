@@ -40,9 +40,12 @@ public class ProcessingSystemView extends AbstractDeviceView {
         body.setStroke(Color.rgb(80, 80, 80).darker().darker().darker());
         body.setStrokeWidth(2);
 
-        innerBody.setStyle("-fx-background-color: rgb(40, 40, 40);" +
-                "-fx-border-color: rgb(20, 20, 20);" +
-                "-fx-background-radius: 10");
+        innerBody.setStyle("""
+                -fx-background-color: rgb(40, 40, 40); 
+                -fx-border-color: rgb(20, 20, 20); 
+                -fx-background-radius: 10;
+                -fx-border-radius: 10;
+                """ );
 
         getChildren().addAll(body, innerBody, lamp);
         drawPorts();

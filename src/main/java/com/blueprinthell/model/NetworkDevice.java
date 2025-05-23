@@ -3,9 +3,7 @@ package com.blueprinthell.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * پایه‌ی مشترک همهٔ سیستم‌ها
- */
+
 public abstract class
 NetworkDevice {
     private final String id;
@@ -27,12 +25,9 @@ NetworkDevice {
     public List<Port> getInPorts()   { return inPorts; }
     public List<Port> getOutPorts()  { return outPorts; }
 
-    /** مشخص می‌کند این دستگاه از چه نوعی است */
     public abstract SystemType getType();
 
-    /** منطقِ اولیه (مثلاً تولید Packet اولیه) */
     public abstract void initialize();
 
-    /** آپدیت مدل در هر فریم با deltaTime به ثانیه */
     public abstract void update(double deltaTime);
 }

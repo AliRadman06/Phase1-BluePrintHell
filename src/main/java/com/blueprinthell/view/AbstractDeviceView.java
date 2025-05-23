@@ -23,7 +23,6 @@ public abstract class AbstractDeviceView extends Group {
         initializeGraphics();
         updatePosition();
         this.setOnMouseClicked(evt -> {
-            showPortLocations();
             evt.consume();
         });
     }
@@ -91,9 +90,6 @@ public abstract class AbstractDeviceView extends Group {
             default -> throw new IllegalStateException("UnKnown port shape");
         }
         shape.setUserData(p);
-        shape.setOnMouseClicked(evt ->
-                System.out.println("Hovered PORT: " + p.getDirection() + " on system " + model.getId())
-        );
         getChildren().add(shape);
         portNodes.add(shape);
         return shape;
@@ -113,8 +109,8 @@ public abstract class AbstractDeviceView extends Group {
 
     private List<Point2D> computePortLocations(List<Port> ports, Port.Direction dir) {
         List<Point2D> locs = new ArrayList<>();
-        double viewX = getTranslateX();       // یا layoutX
-        double viewY = getTranslateY();       // یا layoutY
+        double viewX = getTranslateX();
+        double viewY = getTranslateY();
         double w     = 200;
         double h     = 200;
         for (Port p : ports) {
@@ -124,31 +120,6 @@ public abstract class AbstractDeviceView extends Group {
             locs.add(new Point2D(x, y));
         }
         return locs;
-    }
-
-    private void showPortLocations() {
-//        List<Point2D> ins  = getInputPortLocations();
-//        List<Point2D> outs = getOutputPortLocations();
-//
-//        StringBuilder msg = new StringBuilder();
-//        if (ins.isEmpty()) {
-//            msg.append("ورودی ندارد\n");
-//        } else {
-//            msg.append("ورودی‌ها:\n");
-//            for (Point2D p : ins) {
-//                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
-//            }
-//        }
-//        if (outs.isEmpty()) {
-//            msg.append("خروجی ندارد\n");
-//        } else {
-//            msg.append("خروجی‌ها:\n");
-//            for (Point2D p : outs) {
-//                msg.append(String.format("  (%.1f, %.1f)\n", p.getX(), p.getY()));
-//            }
-//        }
-//
-//        System.out.println("پورت‌های " + model.getId() + ":\n" + msg);
     }
 
     protected Object model() {
