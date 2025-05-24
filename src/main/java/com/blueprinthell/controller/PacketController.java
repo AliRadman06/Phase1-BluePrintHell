@@ -5,10 +5,8 @@ import com.blueprinthell.logic.PacketCollisionDetector;
 import com.blueprinthell.model.*;
 import com.blueprinthell.util.StageProvider;
 import com.blueprinthell.view.GameOverView;
-import com.blueprinthell.view.HUDView;
 import com.blueprinthell.view.PacketView;
 import com.blueprinthell.view.ProcessingSystemView;
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -25,7 +23,6 @@ public class PacketController {
     private final List<PacketView> views = new ArrayList<>();
     private final ScheduledExecutorService executor;
     private final PacketCollisionDetector collisionDetector = new PacketCollisionDetector();
-    private HUDView hudView;
 
 
 
@@ -52,7 +49,7 @@ public class PacketController {
             checkAndForwardBufferedPackets();
 
             List<Packet> toRemovePackets = new ArrayList<>();
-            List<PacketView> toRemoveViews   = new ArrayList<>();
+            List<PacketView> toRemoveViews = new ArrayList<>();
 
             for (int i = 0; i < packets.size(); i++) {
                 Packet p = packets.get(i);
@@ -72,38 +69,45 @@ public class PacketController {
 
                     if (dest != null && dest.getOwner() instanceof ProcessingSystem ps) {
 
+                        if (p.getShape() == Packet.ShapeType.SQUARE) {
+                            GameStats.addCoins(1);
+                        } else if (p.getShape() == Packet.ShapeType.TRIANGLE) {
+                            GameStats.addCoins(2);
+                        }
+
                         List<Wire> allWires = getAllWires();
-                        boolean forwarded = false;
+                        List<Port> outPorts = ps.getOutPorts();
 
-                        for (Port out : ps.getOutPorts()) {
-                            if (!out.getShape().toString().equals(p.getShape().toString()))
-                                continue;
+                        Wire chosenWire = null;
+                        double speed = 100;
 
-                            Wire next = allWires.stream()
+                        for (Port out : outPorts) {
+                            Optional<Wire> maybe = allWires.stream()
                                     .filter(w -> w.getOutputPort().equals(out))
-                                    .findFirst().orElse(null);
+                                    .filter(this::isWireFree)
+                                    .findFirst();
 
-                            if (next != null) {
-                                p.resetProgress();
-                                p.setPath(next.flatten(40));
-                                p.setSpeed(50);
-                                p.setDestinationPort(next.getInputPort());
-                                removePacket(p);
-                                addPacket(p, new PacketView(p));
-
-                                Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
-                                forwarded = true;
+                            if (maybe.isPresent()) {
+                                chosenWire = maybe.get();
+                                speed = out.getShape().toString().equals(p.getShape().toString()) ? 100 : 50;
                                 break;
                             }
                         }
 
-                        if (!forwarded) {
-                            ps.addToBuffer(p);
+                        if (chosenWire != null) {
+                            p.resetProgress();
+                            p.setPath(chosenWire.flatten(40));
+                            p.setSpeed(speed);
+                            p.setDestinationPort(chosenWire.getInputPort());
 
+                            removePacket(p);
+                            addPacket(p, new PacketView(p));
+                            Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
+                        } else {
+                            ps.addToBuffer(p);
                             toRemovePackets.add(p);
                             toRemoveViews.add(v);
                             Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
-
                             Platform.runLater(() -> {
                                 for (Node node : displayLayer.getChildren()) {
                                     if (node instanceof ProcessingSystemView view
@@ -113,8 +117,8 @@ public class PacketController {
                                 }
                             });
                         }
-                    }
-                    else {
+
+                    } else {
                         toRemovePackets.add(p);
                         toRemoveViews.add(v);
                         Platform.runLater(() -> displayLayer.getChildren().remove(v.getNode()));
@@ -130,16 +134,17 @@ public class PacketController {
                     v.updatePosition();
                 }
             });
+
             collisionDetector.update(packets, views);
+
             if (GameStats.isGameOver()) {
                 stop();
-                Platform.runLater(() -> {
-                    GameOverView.showOverlay(StageProvider.getStage().getScene());
-                });
+                Platform.runLater(() -> GameOverView.showOverlay(StageProvider.getStage().getScene()));
             }
 
         }, 0, 16, TimeUnit.MILLISECONDS);
     }
+
 
     public void stop() {
         executor.shutdown();
@@ -154,17 +159,31 @@ public class PacketController {
 
                 while (it.hasNext()) {
                     Packet p = it.next();
-                    if (!wire.getOutputPort().getShape().toString()
-                            .equals(p.getShape().toString())) {
-                        continue;
-                    }
+
+                    // فقط سیم‌های خروجی از این سیستم
+                    List<Wire> freeWires = allWires.stream()
+                            .filter(w -> w.getOutputPort().getOwner().equals(ps))
+                            .filter(this::isWireFree)
+                            .toList();
+
+                    // اولویت با سیم هم‌نوع
+                    Optional<Wire> sameType = freeWires.stream()
+                            .filter(w -> w.getOutputPort().getShape().toString().equals(p.getShape().toString()))
+                            .findFirst();
+
+                    Wire chosen = sameType.orElseGet(() ->
+                            freeWires.isEmpty() ? null : freeWires.get(0)
+                    );
+
+                    if (chosen == null) break;
+
+                    double speed = chosen.getOutputPort().getShape().toString().equals(p.getShape().toString()) ? 100 : 50;
 
                     p.resetProgress();
-                    p.setPath(wire.flatten(40));
-                    p.setSpeed(100);
-                    p.setDestinationPort(wire.getInputPort());
+                    p.setPath(chosen.flatten(40));
+                    p.setSpeed(speed);
+                    p.setDestinationPort(chosen.getInputPort());
                     addPacket(p, new PacketView(p));
-
                     it.remove();
 
                     Platform.runLater(() -> {
@@ -179,6 +198,7 @@ public class PacketController {
             }
         }
     }
+
 
     private List<Wire> getAllWires() {
         List<Wire> wires = new ArrayList<>();
@@ -200,9 +220,13 @@ public class PacketController {
         }
     }
 
-    public void setHUDView(HUDView hudView) {
-        this.hudView = hudView;
+    private boolean isWireFree(Wire wire) {
+        return packets.stream()
+                .noneMatch(p -> p.getDestinationPort() != null &&
+                        p.getDestinationPort().equals(wire.getInputPort()) &&
+                        !p.isFinished());
     }
+
 
 
 }

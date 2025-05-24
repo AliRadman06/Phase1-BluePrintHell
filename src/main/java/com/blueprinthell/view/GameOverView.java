@@ -45,7 +45,8 @@ public class GameOverView extends AnchorPane {
         int deliveredPackets = totalPackets - lostPackets;
         float lossPercent = (totalPackets == 0) ? 0 : (100f * lostPackets / totalPackets);
 
-        Label statsLabel = new Label("Delivered: " + deliveredPackets + "\nLoss: " + String.format("%.1f", lossPercent) + "%");
+        Label statsLabel = new Label("Delivered: " + deliveredPackets + "Loss: " + String.format("%.1f", lossPercent) + "%");
+        GameStats.reset();
         statsLabel.setFont(Font.font("X VOSTA", 50));
         statsLabel.setTextFill(Color.WHITE);
         statsLabel.setAlignment(Pos.CENTER);

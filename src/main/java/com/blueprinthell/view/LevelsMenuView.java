@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class LevelsMenuView extends AnchorPane {
+
     public LevelsMenuView() {
 
         ImageView bg = new ImageView(getClass().getResource("/images/MainMenuBackground.png").toExternalForm());
@@ -78,8 +79,16 @@ public class LevelsMenuView extends AnchorPane {
         Stage stage = (Stage) getScene().getWindow();
         GameViewL1 view = new GameViewL1();
         stage.getScene().setRoot(view);
-        new WiringController(view);
+
+        // زمانی اجرا بشه که Scene کامل set شده
+        javafx.application.Platform.runLater(() -> {
+            WiringController wc = new WiringController(view);
+            view.setWiringController(wc); // ← اگر نیاز داشتی دسترسی داخل view داشته باشی
+
+        });
     }
+
+
 
     private void switchToLevel2() {}
 

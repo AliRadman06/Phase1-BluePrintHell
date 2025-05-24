@@ -22,4 +22,8 @@ public class GameSession {
     public static void resetStats() {
         stats = new GameStats();
     }
+
+    public static double getPacketLoss() {
+        return stats.getLossPercent();
+    }
 }

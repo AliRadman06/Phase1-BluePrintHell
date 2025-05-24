@@ -6,7 +6,7 @@ public class GameStats {
     private static int totalSize = 0;
     private static int lostCount = 0;
     private static WiringController wiringController;
-    private static int coin ;
+    private static int coins = 0;
 
 
     public static void registerPacket(int packet) {
@@ -48,10 +48,14 @@ public class GameStats {
     }
 
     public static double getCoins() {
-        return coin;
+        return coins;
     }
 
-    public static void addCoin (double coins) {}
+    public static void addCoins(int c) {
+        coins += c;
+    }
 
-    public static void setWiringController(WiringController wiringController) {}
+    public static void resetCoins() {
+        coins = 0;
+    }
 }

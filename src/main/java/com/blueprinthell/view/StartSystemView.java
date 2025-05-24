@@ -76,9 +76,15 @@ public class StartSystemView extends AbstractDeviceView {
         startButton.setLayoutX(5);
         startButton.setLayoutY(11.5);
         startButton.setPrefWidth(70);
-        startButton.setStyle("-fx-background-radius: 5;" +
-                "-fx-background-color: rgba(40,40,40,1);"
-        );
+        startButton.setStyle("""
+                -fx-background-radius: 5;
+                -fx-background-color: rgba(40,40,40,1);
+                -fx-font-family: 'X Vosta';
+                -fx-font-size: 14;
+                -fx-border-color: rgba(20,20,20,1);
+                -fx-border-radius: 5;
+               
+        """);
         startButton.setOnAction(e -> startAutoSendPackets());
 
 
@@ -93,13 +99,13 @@ public class StartSystemView extends AbstractDeviceView {
         if (packetController == null || wiringLayer == null) return;
 
         if (squareTimeline == null) {
-            squareTimeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> sendPacket(Packet.ShapeType.SQUARE)));
+            squareTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> sendPacket(Packet.ShapeType.SQUARE)));
             squareTimeline.setCycleCount(Timeline.INDEFINITE);
             squareTimeline.play();
         }
 
         if (triangleTimeline == null) {
-            triangleTimeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> sendPacket(Packet.ShapeType.TRIANGLE)));
+            triangleTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> sendPacket(Packet.ShapeType.TRIANGLE)));
             triangleTimeline.setCycleCount(Timeline.INDEFINITE);
             triangleTimeline.play();
         }

@@ -1,21 +1,32 @@
 package com.blueprinthell.view;
 
 import com.blueprinthell.controller.PacketController;
+import com.blueprinthell.controller.WiringController;
 import com.blueprinthell.logic.GameStats;
 import com.blueprinthell.model.*;
 import com.blueprinthell.util.GameSession;
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +38,18 @@ public class GameViewL1 extends AnchorPane {
     private Pane wiringLayer = new Pane();
     private final PacketController packetController;
     public static final double TOTAL_WIRE = 1500.0;
-    private HUDView hudView;
     private GameStats gameStats; // اگه قبلاً نداری
-
-
-
+    private WiringController wiringController;
+    private Label wireLabel;
+    private Label coinLabel;
+    private Label packetLossLabel;
+    private Timeline hudTimeline;
 
     public GameViewL1() {
         GameSession.setCurrentLevel(1);
+        GameStats.resetCoins();
+
+
         gridCanvas = new Canvas();
         gridCanvas.widthProperty().bind(widthProperty());
         gridCanvas.heightProperty().bind(heightProperty());
@@ -57,19 +72,6 @@ public class GameViewL1 extends AnchorPane {
         packetController = new PacketController(gamePane);
         packetController.setWiringLayer(wiringLayer);
         packetController.start();
-
-
-        // --- دکمهٔ Back ---
-        backButton = new Button("Back");
-        backButton.setTextFill(Color.WHITE);
-        backButton.setPrefHeight(39);
-        backButton.setPrefWidth(79);
-        backButton.setStyle("-fx-background-color: rgb(110,110,110)");
-        backButton.setLayoutX(1);
-        backButton.setLayoutY(1);
-        backButton.setOnAction(e -> goBackToMenu());
-        getChildren().add(backButton);
-
 
         // — نمونهٔ StartSystem —
         StartSystem s1 = (StartSystem) SystemFactory.createSystem(SystemType.START, "s1", 80, 120);
@@ -177,11 +179,59 @@ public class GameViewL1 extends AnchorPane {
         AbstractDeviceView v4 = DeviceViewFactory.create(e1);
         gamePane.getChildren().add(v4);
 
-        // ساخت HUD
+        // --- HUD Wire Label ---
+        HBox hudBar = new HBox(40); // فاصله بین آیتم‌ها
+        hudBar.setAlignment(Pos.CENTER);
+        hudBar.setPadding(new Insets(10));
+        hudBar.setStyle("-fx-background-color: rgba(0,0,0,0.6);");
+        hudBar.setPrefHeight(40);
+        hudBar.setPrefWidth(USE_COMPUTED_SIZE);
+
+        wireLabel = new Label("Wire Left: 0");
+        coinLabel = new Label("Coins: 0");
+        packetLossLabel = new Label("Loss: 0%");
+
+        List<Label> labels = List.of(wireLabel, coinLabel, packetLossLabel);
+        for (Label lbl : labels) {
+            lbl.setTextFill(Color.WHITE);
+            lbl.setFont(Font.font(20));
+            lbl.setStyle(
+                    "-fx-font-family: 'X Vosta' "
+            );
+        }
+
+        hudBar.getChildren().addAll(wireLabel, coinLabel, packetLossLabel);
+        AnchorPane.setTopAnchor(hudBar, 0.0);
+        AnchorPane.setLeftAnchor(hudBar, 0.0);
+        AnchorPane.setRightAnchor(hudBar, 0.0);
+        getChildren().add(hudBar);
+
+        // --- دکمهٔ Back ---
+        backButton = new Button("Back");
+        backButton.setTextFill(Color.WHITE);
+        backButton.setPrefHeight(39);
+        backButton.setPrefWidth(79);
+        backButton.setStyle("""
+                               -fx-background-color: rgb(110,110,110);
+                               -fx-font-family: "X VOSTA";
+                               -fx-font-size: 20;
+                            """);
+        backButton.setLayoutX(1);
+        backButton.setLayoutY(1);
+        backButton.setOnAction(e -> goBackToMenu());
+        getChildren().add(backButton);
 
 
-
-
+// --- Timeline آپدیت HUD ---
+        hudTimeline = new Timeline(
+                new KeyFrame(Duration.millis(200), e -> {
+                    wireLabel.setText("Wire Left: " + (int) wiringController.getRemainingWires());
+                    coinLabel.setText("Coins: " + GameStats.getCoins());
+                    packetLossLabel.setText("Loss: " + (int) GameStats.getLossPercent() + "%");
+                })
+        );
+        hudTimeline.setCycleCount(Timeline.INDEFINITE);
+        hudTimeline.play();
 
 
     }
@@ -223,6 +273,10 @@ public class GameViewL1 extends AnchorPane {
 
     public PacketController getPacketController() {
         return packetController;
+    }
+
+    public void setWiringController(WiringController wiringController) {
+        this.wiringController = wiringController;
     }
 
 }
