@@ -29,7 +29,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GameViewL1 extends AnchorPane {
     private final AnchorPane gamePane;
@@ -44,6 +46,14 @@ public class GameViewL1 extends AnchorPane {
     private Label coinLabel;
     private Label packetLossLabel;
     private Timeline hudTimeline;
+    private final ShopView shopView;
+    private  Button shopButton;
+    private final VBox skillsBox ;
+    private final Button skillsButton;
+
+
+
+
 
     public GameViewL1() {
         GameSession.setCurrentLevel(1);
@@ -121,8 +131,8 @@ public class GameViewL1 extends AnchorPane {
         Port p1out1 = new Port(p1, Port.Direction.OUT, Port.Shape.SQUARE);
         Port p1out2 = new Port(p1, Port.Direction.OUT, Port.Shape.TRIANGLE);
 
-        p1out1.setRelativeY(0.7);
-        p1out2.setRelativeY(0.3);
+        p1out1.setRelativeY(0.3);
+        p1out2.setRelativeY(0.7);
 
         p1.getOutPorts().add(p1out1);
         p1.getOutPorts().add(p1out2);
@@ -181,9 +191,9 @@ public class GameViewL1 extends AnchorPane {
 
         // --- HUD Wire Label ---
         HBox hudBar = new HBox(40); // فاصله بین آیتم‌ها
-        hudBar.setAlignment(Pos.CENTER);
+        hudBar.setAlignment(Pos.TOP_CENTER);
         hudBar.setPadding(new Insets(10));
-        hudBar.setStyle("-fx-background-color: rgba(0,0,0,0.6);");
+        hudBar.setStyle("-fx-background-color: rgba(0,0,0,0.9);");
         hudBar.setPrefHeight(40);
         hudBar.setPrefWidth(USE_COMPUTED_SIZE);
 
@@ -194,7 +204,7 @@ public class GameViewL1 extends AnchorPane {
         List<Label> labels = List.of(wireLabel, coinLabel, packetLossLabel);
         for (Label lbl : labels) {
             lbl.setTextFill(Color.WHITE);
-            lbl.setFont(Font.font(20));
+            lbl.setFont(Font.font(18));
             lbl.setStyle(
                     "-fx-font-family: 'X Vosta' "
             );
@@ -221,8 +231,88 @@ public class GameViewL1 extends AnchorPane {
         backButton.setOnAction(e -> goBackToMenu());
         getChildren().add(backButton);
 
+        // --- Skills Box ---
+        skillsBox = new VBox(10);
+        skillsBox.setPadding(new Insets(10));
+        skillsBox.setLayoutX(134);
+        skillsBox.setLayoutY(45);
+        skillsBox.setStyle("""
+                -fx-background-color: rgba(50, 50, 50, 0.95);
+                            -fx-background-radius: 10;
+                            -fx-border-color: white;
+                            -fx-border-width: 1;
+                            -fx-border-radius: 10;
+                """);
+        skillsBox.setVisible(false);
+        getChildren().add(skillsBox);
 
-// --- Timeline آپدیت HUD ---
+
+        // --- Skills Button ---
+        skillsButton = new Button("Skills");
+        skillsButton.setTextFill(Color.WHITE);
+        skillsButton.setPrefWidth(79);
+        skillsButton.setPrefHeight(39);
+        skillsButton.setLayoutX(161);
+        skillsButton.setLayoutY(1);
+        skillsButton.setStyle("""
+            -fx-background-color: rgb(110,110,110);
+            -fx-font-family: 'X VOSTA';
+            -fx-font-size: 20;
+        """);
+        skillsButton.setTextFill(Color.WHITE);
+
+        skillsButton.setOnAction(e -> {
+            if (!skillsBox.isVisible()) {
+                updateSkillsBox();
+                skillsBox.setVisible(true);
+            } else {
+                skillsBox.setVisible(false);
+            }
+        });
+        getChildren().add(skillsButton);
+
+
+
+        // --- Shop View ---
+        shopView = new ShopView(() ->
+            packetController.resume(),
+            packetController
+        );
+        shopView.setVisible(false);
+
+
+        AnchorPane.setTopAnchor(shopView, 0.0);
+        AnchorPane.setBottomAnchor(shopView, 0.0);
+        AnchorPane.setLeftAnchor(shopView, 0.0);
+        AnchorPane.setRightAnchor(shopView, 0.0);
+
+        getChildren().add(shopView);
+
+
+
+        // --- Shop Button ---
+        shopButton = new Button("Shop");
+        shopButton.setTextFill(Color.WHITE);
+        shopButton.setPrefWidth(79);
+        shopButton.setPrefHeight(39);
+        shopButton.setStyle("""
+                                -fx-background-color: rgb(110,110,110);
+                                -fx-font-family: "X VOSTA";
+                                -fx-font-size: 20;
+                            """);
+
+        shopButton.setLayoutX(81);
+        shopButton.setLayoutY(1);
+
+        shopButton.setOnAction(e -> {
+            shopView.updateBuyButtons();
+            shopView.setVisible(true);
+            packetController.pause();
+        });
+
+        getChildren().add(shopButton);
+
+//      --- Timeline آپدیت HUD ---
         hudTimeline = new Timeline(
                 new KeyFrame(Duration.millis(200), e -> {
                     wireLabel.setText("Wire Left: " + (int) wiringController.getRemainingWires());
@@ -277,6 +367,86 @@ public class GameViewL1 extends AnchorPane {
 
     public void setWiringController(WiringController wiringController) {
         this.wiringController = wiringController;
+    }
+
+    private void updateSkillsBox() {
+        skillsBox.getChildren().clear();
+        List<String> items = packetController.boughtItems();
+        Set<String> addedItems = new HashSet<>();
+
+        for (String item : items) {
+            if (addedItems.contains(item)) continue;
+            addedItems.add(item);
+
+            final String itemFinal = item;
+            final Runnable action;
+            final boolean isAvailable;
+
+            if (itemFinal.equals("O Atar")) {
+                action = () -> {
+                    packetController.activateOAtarSkill();
+                    packetController.setOAtarCount(packetController.getOAtarCount()-1); // کم کردن کانتر
+                };
+                isAvailable = packetController.isOAtarBought();
+            } else if (itemFinal.equals("O Airyaman")) {
+                action = () -> {
+                    packetController.activateOAiryamanSkill();
+                    packetController.setOAiryamanCount(packetController.getOAiryamanCount()-1);
+                };
+                isAvailable = packetController.isOAiryamanBought();
+            } else if (itemFinal.equals("O Anahita")) {
+                action = () -> {
+                    packetController.activeOAnahitaSkill();
+                    packetController.setOAnahitaCount(packetController.getOAnahitaCount()-1);
+                };
+                isAvailable = packetController.isOAnahitaBought();
+            } else {
+                continue;
+            }
+
+            if (isAvailable) {
+                Button skillBtn = new Button();
+                skillBtn.setStyle("""
+                        -fx-background-color: gold;
+                        -fx-font-family: 'X Vosta';
+                        -fx-font-size: 15;
+                        -fx-background-radius: 20;
+                        """);
+
+                skillBtn.setOnAction(ev -> {
+                    action.run();
+
+                    // Refresh text
+                    String newLabel;
+                    if (itemFinal.equals("O Atar")) newLabel = "O Atar (" + packetController.getOAtarCount() + ")";
+                    else if (itemFinal.equals("O Airyaman")) newLabel = "O Airyaman (" + packetController.getOAiryamanCount() + ")";
+                    else newLabel = "O Anahita (" + packetController.getOAnahitaCount() + ")";
+
+                    skillBtn.setText(newLabel);
+
+                    // Disable if used up
+                    if ((itemFinal.equals("O Atar") && !packetController.isOAtarBought()) ||
+                            (itemFinal.equals("O Airyaman") && !packetController.isOAiryamanBought()) ||
+                            (itemFinal.equals("O Anahita") && !packetController.isOAnahitaBought())) {
+
+                        skillBtn.setDisable(true);
+                        skillBtn.setStyle("""
+                                            -fx-background-color: gray;
+                                            -fx-font-family: 'X Vosta';
+                                            -fx-font-size: 15;
+                                            -fx-background-radius: 20;
+                                        """);
+                    }
+                });
+
+                // مقدار اولیه لیبل دکمه
+                if (itemFinal.equals("O Atar")) skillBtn.setText("O Atar (" + packetController.getOAtarCount() + ")");
+                else if (itemFinal.equals("O Airyaman")) skillBtn.setText("O Airyaman (" + packetController.getOAiryamanCount() + ")");
+                else skillBtn.setText("O Anahita (" + packetController.getOAnahitaCount() + ")");
+
+                skillsBox.getChildren().add(skillBtn);
+            }
+        }
     }
 
 }

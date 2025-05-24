@@ -10,8 +10,28 @@ import java.util.Set;
 
 public class PacketCollisionDetector {
     private final Set<PacketCollisionKey> active = new HashSet<>();
+    private boolean impactDisabled = false;
+    private long impactDisableUntil = 0;
+    private boolean collisionDisabled = false;
+    private long collisionDisableUntil = 0;
+
+
 
     public void update(List<Packet> packets, List<PacketView> views) {
+
+        if (impactDisabled && System.currentTimeMillis() > impactDisableUntil) {
+            impactDisabled = false;
+        }
+
+        if (collisionDisabled && System.currentTimeMillis() > collisionDisableUntil) {
+            collisionDisabled = false;
+        }
+
+        if (collisionDisabled) {
+            return;
+        }
+
+
         Set<PacketCollisionKey> current = new HashSet<>();
 
         int count = packets.size();
@@ -63,17 +83,21 @@ public class PacketCollisionDetector {
         final double DEV = 5.0;
 
         a.increaseNoise(DAMAGE);
+        System.out.println(a.getId() + "  :  " + a.getNoise());
         b.increaseNoise(DAMAGE);
+        System.out.println(b.getId() + "  :  " + b.getNoise());
 
         double ay = va.getNode().getLayoutY() + va.getNode().getTranslateY();
         double by = vb.getNode().getLayoutY() + vb.getNode().getTranslateY();
 
-        if (ay < by) {
-            a.addDeviation(+DEV);
-            b.addDeviation(-DEV);
-        } else {
-            a.addDeviation(-DEV);
-            b.addDeviation(+DEV);
+        if (!impactDisabled) {
+            if (ay < by) {
+                a.addDeviation(+DEV);
+                b.addDeviation(-DEV);
+            } else {
+                a.addDeviation(-DEV);
+                b.addDeviation(+DEV);
+            }
         }
 
         if (a.getNoise() >= a.getSize()) {
@@ -120,18 +144,32 @@ public class PacketCollisionDetector {
             double ny = dy / dist;
 
             p.addDeviation(power);
-            p.increaseNoise(power / 7);  // ← نویز هم بیاد بالا (مثلاً 1000 قدرت موج → 100 نویز)
+            p.increaseNoise(power / 7);
+            System.out.println(p.getId()+ "  :  " + p.getNoise());
             if (p.getNoise() >= p.getSize()) {
                 p.kill();
-                System.out.println("💀 Packet#" + p.getId() + " killed by wave (noise)");
             }
 
 
             pv.getNode().setTranslateX(pv.getNode().getTranslateX() + nx * power);
             pv.getNode().setTranslateY(pv.getNode().getTranslateY() + ny * power);
 
-            System.out.println("🌊 Wave impact on Packet#" + p.getId()
-                    + " → deviation +" + String.format("%.2f", power));
         }
     }
+
+    public void disableImpactForSeconds(int seconds) {
+        this.impactDisabled = true;
+        this.impactDisableUntil = System.currentTimeMillis() + seconds * 1000L;
+    }
+
+    public boolean isImpactDisabled() {
+        return impactDisabled;
+    }
+
+    public void disableCollisionForSeconds(int seconds) {
+        collisionDisabled = true;
+        collisionDisableUntil = System.currentTimeMillis() + seconds * 1000L;
+    }
+
+
 }

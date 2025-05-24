@@ -87,7 +87,6 @@ public class WiringController {
                     currentWireView.getCurve().setUserData(currentWire);
                     if (addConnection(currentWire)) {
                         currentWireView.bindToBudget(remainingWires);
-                        System.out.println(remainingWires);
                     } else {
                         wiringLayer.getChildren().remove(currentWireView.getCurve());
                     }

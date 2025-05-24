@@ -24,6 +24,11 @@ public class PacketController {
     private final List<PacketView> views = new ArrayList<>();
     private final ScheduledExecutorService executor;
     private final PacketCollisionDetector collisionDetector = new PacketCollisionDetector();
+    private boolean isPaused = false;
+    private List<Packet> allPackets = new ArrayList<>();
+    private int oAtarCount = 0;
+    private int oAiryamanCount = 0;
+    private int oAnahitaCount = 0;
 
     public PacketController(Pane displayLayer) {
         this.displayLayer = displayLayer;
@@ -36,13 +41,17 @@ public class PacketController {
 
     public void addPacket(Packet packet, PacketView view) {
         packets.add(packet);
+        if (!allPackets.contains(packet)) allPackets.add(packet);
+        System.out.println(allPackets.size());
         views.add(view);
         Platform.runLater(() -> displayLayer.getChildren().add(view.getNode()));
     }
 
     public void start() {
+
         executor.scheduleAtFixedRate(() -> {
             double dt = 1.0 / 60;
+            if (isPaused) return;
 
             checkAndForwardBufferedPackets();
 
@@ -228,4 +237,66 @@ public class PacketController {
                         !p.isFinished()
         );
     }
+
+    public void pause() {
+        isPaused = true;
+    }
+
+    public void resume() {
+        isPaused = false;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void activateOAtarSkill() {
+        collisionDetector.disableImpactForSeconds(10);
+    }
+
+    public void activateOAiryamanSkill() {
+        collisionDetector.disableCollisionForSeconds(5);
+    }
+
+    public void activeOAnahitaSkill() {
+        for (Packet packet : allPackets) {
+            packet.setNoise(0);
+        }
+    }
+
+    public void addOAtar()     { oAtarCount++; }
+    public void addOAiryaman() { oAiryamanCount++; }
+    public void addOAnahita()  { oAnahitaCount++; }
+
+    public int getOAtarCount()     { return oAtarCount; }
+    public int getOAiryamanCount() { return oAiryamanCount; }
+    public int getOAnahitaCount()  { return oAnahitaCount; }
+
+    public void setOAtarCount(int oAtarCount) {
+        this.oAtarCount = oAtarCount;
+    }
+
+    public void setOAiryamanCount(int oAiryamanCount) {
+        this.oAiryamanCount = oAiryamanCount;
+    }
+
+    public void setOAnahitaCount(int oAnahitaCount) {
+        this.oAnahitaCount = oAnahitaCount;
+    }
+
+
+
+    public boolean isOAtarBought()   { return oAtarCount > 0; }
+    public boolean isOAiryamanBought() { return oAiryamanCount > 0; }
+    public boolean isOAnahitaBought() { return oAnahitaCount > 0; }
+
+    public List<String> boughtItems() {
+        List<String> boughtItems = new ArrayList<>();
+        if (isOAiryamanBought()) boughtItems.add("O Airyaman");
+        if (isOAnahitaBought())  boughtItems.add("O Anahita");
+        if (isOAtarBought())     boughtItems.add("O Atar");
+        return boughtItems;
+    }
+
+
 }

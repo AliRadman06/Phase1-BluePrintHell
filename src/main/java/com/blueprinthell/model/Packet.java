@@ -29,6 +29,7 @@ public class Packet {
         this.shape = shape;
         this.size = size;
         this.id = counter++;
+
     }
 
     public void advance(double dist) {
@@ -68,7 +69,6 @@ public class Packet {
     };
     }
     public double getNoise()      { return noise; }
-    public void   addNoise(double delta) { noise += delta; }
     public double getSpeed()      { return speed; }
     public void   setSpeed(double speed) { this.speed = speed; }
     public void setPath(List<Point2D> path) { this.path = path; }
@@ -123,4 +123,8 @@ public class Packet {
             kill();
         }
     }
+    public void setNoise(double noise) {
+        this.noise = noise;
+    }
+
 }

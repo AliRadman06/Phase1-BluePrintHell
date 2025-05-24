@@ -1,0 +1,17 @@
+[
+  {
+    "name": "O' Atar",
+    "price": 3,
+    "description": "Disables Impact waves for 10 seconds."
+  },
+  {
+    "name": "O' Airyaman",
+    "price": 4,
+    "description": "Disables all packet collisions in the network for 5 seconds."
+  },
+  {
+    "name": "O' Anahita",
+    "price": 5,
+    "description": "Removes noise from all packets currently in the network."
+  }
+]

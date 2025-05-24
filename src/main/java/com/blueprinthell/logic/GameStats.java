@@ -58,4 +58,8 @@ public class GameStats {
     public static void resetCoins() {
         coins = 0;
     }
+
+    public static void removeCoins(int c) {
+        coins -= c;
+    }
 }
