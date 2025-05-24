@@ -62,6 +62,8 @@ public class ProcessingSystemView extends AbstractDeviceView {
             if (p.getShape() == Packet.ShapeType.SQUARE) {
                 Rectangle r = new Rectangle(20, 20);
                 r.setFill(Color.YELLOW);
+                r.setStroke(Color.rgb(140, 112, 5));
+                r.setStrokeWidth(2);
                 r.setLayoutX(10);
                 r.setLayoutY(y);
                 innerBody.getChildren().add(r);
@@ -72,6 +74,8 @@ public class ProcessingSystemView extends AbstractDeviceView {
                         10.0, 20.0
                 );
                 tri.setFill(Color.ORANGE);
+                tri.setStroke(Color.rgb(152, 82, 5));
+                tri.setStrokeWidth(2);
                 tri.setRotate(180);
                 tri.setLayoutX(10);
                 tri.setLayoutY(y);
