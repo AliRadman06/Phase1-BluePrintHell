@@ -3,11 +3,9 @@ package com.blueprinthell.controller;
 import com.blueprinthell.logic.GameStats;
 import com.blueprinthell.logic.PacketCollisionDetector;
 import com.blueprinthell.model.*;
+import com.blueprinthell.util.SoundManager;
 import com.blueprinthell.util.StageProvider;
-import com.blueprinthell.view.EndSystemView;
-import com.blueprinthell.view.GameOverView;
-import com.blueprinthell.view.PacketView;
-import com.blueprinthell.view.ProcessingSystemView;
+import com.blueprinthell.view.*;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -29,6 +27,15 @@ public class PacketController {
     private int oAtarCount = 0;
     private int oAiryamanCount = 0;
     private int oAnahitaCount = 0;
+    private List<Packet> alivePackets = new ArrayList<>();
+    private List<Packet> lostPackets = new ArrayList<>();
+    private EndSystem endSystem;
+    private boolean isWinChecked = false;
+    private int totalToBeSpawned = 0;
+    private int finishedPackets = 0;
+
+
+
 
     public PacketController(Pane displayLayer) {
         this.displayLayer = displayLayer;
@@ -40,9 +47,12 @@ public class PacketController {
     }
 
     public void addPacket(Packet packet, PacketView view) {
+        collisionDetector.setPacketController(this);
         packets.add(packet);
-        if (!allPackets.contains(packet)) allPackets.add(packet);
-        System.out.println(allPackets.size());
+        if (!allPackets.contains(packet)) {
+            allPackets.add(packet);
+
+        }
         views.add(view);
         Platform.runLater(() -> displayLayer.getChildren().add(view.getNode()));
     }
@@ -128,6 +138,7 @@ public class PacketController {
                             else if (p.getShape() == Packet.ShapeType.TRIANGLE) GameStats.addCoins(2);
 
                             es.addToBuffer(p);
+                            finishedPackets++;
                             toRemovePackets.add(p);
                             toRemoveViews.add(v);
                             Platform.runLater(() -> {
@@ -156,8 +167,19 @@ public class PacketController {
 
             if (GameStats.isGameOver()) {
                 stop();
-                Platform.runLater(() -> GameOverView.showOverlay(StageProvider.getStage().getScene()));
+                Platform.runLater(() -> {
+                    GameOverView.showOverlay(StageProvider.getStage().getScene());
+                    SoundManager.getInstance().playEffect("game-over", "/audio/Game_Over.mp3");
+                });
+
             }
+
+            if (!isWinChecked && totalToBeSpawned > 0 && finishedPackets == totalToBeSpawned) {
+                isWinChecked = true;
+                System.out.println("win");
+                Platform.runLater(() -> WinView.showOverlay(StageProvider.getStage().getScene()));
+            }
+
 
         }, 0, 16, TimeUnit.MILLISECONDS);
     }
@@ -297,6 +319,23 @@ public class PacketController {
         if (isOAtarBought())     boughtItems.add("O Atar");
         return boughtItems;
     }
+
+    public void addPacketToLossList(Packet p) {
+        lostPackets.add(p);
+    }
+
+    public void setEndSystem(EndSystem endSystem) {
+        this.endSystem = endSystem;
+    }
+
+    public void incrementFinishedPackets() {
+        finishedPackets++;
+    }
+
+    public void setTotalToBeSpawned(int t) {
+        this.totalToBeSpawned = t;
+    }
+
 
 
 }

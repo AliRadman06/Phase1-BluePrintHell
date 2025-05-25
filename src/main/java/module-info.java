@@ -11,6 +11,8 @@ module com.blueprinthell {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires com.google.gson;
+    requires javafx.media;
+    requires com.gluonhq.attach.util;
 
     opens com.blueprinthell to javafx.fxml;
     opens com.blueprinthell.controller to javafx.fxml;

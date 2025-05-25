@@ -24,9 +24,7 @@ public class EndSystem extends NetworkDevice {
     private final List<Packet> packetBuffer = new ArrayList<>();
 
     public void addToBuffer(Packet packet) {
-        if (packetBuffer.size() < 5) {
             packetBuffer.add(packet);
-        }
     }
 
     public List<Packet> getPacketBuffer() {

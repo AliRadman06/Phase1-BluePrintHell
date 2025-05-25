@@ -1,6 +1,8 @@
 package com.blueprinthell.logic;
 
+import com.blueprinthell.controller.PacketController;
 import com.blueprinthell.model.Packet;
+import com.blueprinthell.util.SoundManager;
 import com.blueprinthell.view.PacketView;
 import javafx.scene.shape.Shape;
 
@@ -14,6 +16,7 @@ public class PacketCollisionDetector {
     private long impactDisableUntil = 0;
     private boolean collisionDisabled = false;
     private long collisionDisableUntil = 0;
+    private PacketController packetController;
 
 
 
@@ -82,6 +85,8 @@ public class PacketCollisionDetector {
         final double DAMAGE = 1.0;
         final double DEV = 5.0;
 
+        SoundManager.getInstance().playEffect("packet-hit", "/audio/packet_hit.mp3");
+
         a.increaseNoise(DAMAGE);
         System.out.println(a.getId() + "  :  " + a.getNoise());
         b.increaseNoise(DAMAGE);
@@ -102,9 +107,13 @@ public class PacketCollisionDetector {
 
         if (a.getNoise() >= a.getSize()) {
             a.kill();
+            packetController.addPacketToLossList(a);
+            packetController.incrementFinishedPackets();
+
         }
         if (b.getNoise() >= b.getSize()) {
             b.kill();
+            packetController.addPacketToLossList(b);
         }
 
         double impactX = (va.getX() + vb.getX()) / 2;
@@ -148,6 +157,9 @@ public class PacketCollisionDetector {
             System.out.println(p.getId()+ "  :  " + p.getNoise());
             if (p.getNoise() >= p.getSize()) {
                 p.kill();
+                packetController.addPacketToLossList(p);
+                packetController.incrementFinishedPackets();
+
             }
 
 
@@ -169,6 +181,10 @@ public class PacketCollisionDetector {
     public void disableCollisionForSeconds(int seconds) {
         collisionDisabled = true;
         collisionDisableUntil = System.currentTimeMillis() + seconds * 1000L;
+    }
+
+    public void setPacketController(PacketController packetController) {
+        this.packetController = packetController;
     }
 
 

@@ -2,6 +2,7 @@ package com.blueprinthell.view;
 
 import com.blueprinthell.controller.WiringController;
 import com.blueprinthell.util.Constants;
+import com.blueprinthell.util.SoundManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -65,9 +66,18 @@ public class LevelsMenuView extends AnchorPane {
             vb.getChildren().add(b);
 
             switch (levelName) {
-                case "LEVEL 1" -> b.setOnAction(e -> switchToLevel1() );
-                case "LEVEL 2" -> b.setOnAction(e -> switchToLevel2() );
-                case "BACK" -> b.setOnAction(e -> backToMenu());
+                case "LEVEL 1" -> b.setOnAction(e -> {
+                    switchToLevel1();
+                    SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+                });
+                case "LEVEL 2" -> b.setOnAction(e -> {
+                    switchToLevel2();
+                    SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+                });
+                case "BACK" -> b.setOnAction(e -> {
+                    backToMenu();
+                    SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+                });
             }
         }
 
@@ -77,7 +87,7 @@ public class LevelsMenuView extends AnchorPane {
 
     private void switchToLevel1() {
         Stage stage = (Stage) getScene().getWindow();
-        GameViewL1 view = new GameViewL1();
+        GameView view = new GameView();
         stage.getScene().setRoot(view);
 
         // زمانی اجرا بشه که Scene کامل set شده

@@ -1,17 +1,15 @@
 package com.blueprinthell.controller;
 
-import com.blueprinthell.model.Packet;
 import com.blueprinthell.model.Port;
 import com.blueprinthell.model.Wire;
+import com.blueprinthell.util.SoundManager;
 import com.blueprinthell.view.AbstractDeviceView;
-import com.blueprinthell.view.GameViewL1;
-import com.blueprinthell.view.PacketView;
+import com.blueprinthell.view.GameView;
 import com.blueprinthell.view.WireView;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import com.blueprinthell.controller.PacketController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +23,14 @@ public class WiringController {
     private final PacketController packetController;
 
 
-    public WiringController(GameViewL1 view) {
+    public WiringController(GameView view) {
         this.wiringLayer = view.getWiringLayer();
-        this.packetController = view.getPacketController(); // ← همین
+        this.packetController = view.getPacketController();
         this.remainingWires = view.TOTAL_WIRE;
         initEventHandlers(view);
     }
 
-    private void initEventHandlers(GameViewL1 view) {
+    private void initEventHandlers(GameView view) {
         for( Node child : view.getGamePane().getChildren() ) {
             if( child instanceof AbstractDeviceView deviceView) {
                 for( Node portShape : deviceView.getAllPortNodes() ){
@@ -87,6 +85,8 @@ public class WiringController {
                     currentWireView.getCurve().setUserData(currentWire);
                     if (addConnection(currentWire)) {
                         currentWireView.bindToBudget(remainingWires);
+                        SoundManager.getInstance().playEffect("wire-connect", "/audio/wire_connect.mp3");
+
                     } else {
                         wiringLayer.getChildren().remove(currentWireView.getCurve());
                     }

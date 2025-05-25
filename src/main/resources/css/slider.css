@@ -1,0 +1,22 @@
+.custom-slider .track {
+    -fx-background-color: linear-gradient(to right, #222, #444);
+    -fx-background-radius: 8;
+    -fx-pref-height: 8;
+}
+
+.custom-slider .thumb {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0.4, 0, 1);
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+    -fx-padding: 0;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.custom-slider .fill {
+    -fx-background-color: linear-gradient(to right, #09f, #0cf);
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+}

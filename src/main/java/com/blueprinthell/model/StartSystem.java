@@ -29,6 +29,14 @@ public class StartSystem extends NetworkDevice {
 
     }
 
+    public int getSquarePacket() {
+        return this.squarePacket;
+    }
+
+    public int getTrianglePacket() {
+        return this.trianglePacket;
+    }
+
     public void generateInitialPackets(List<Point2D> path) {
         for (int i = 0; i < squarePacket; i++) {
             Packet p = new Packet(Packet.ShapeType.SQUARE, 2);

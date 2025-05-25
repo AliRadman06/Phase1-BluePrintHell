@@ -1,7 +1,7 @@
 package com.blueprinthell.controller;
 
 import com.blueprinthell.util.Constants;
-import com.blueprinthell.view.GameViewL1;
+import com.blueprinthell.view.GameView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
@@ -28,8 +28,8 @@ public class MainMenuController {
     private void SwitchGameView() {
 
         Stage stage = (Stage) StartButton.getScene().getWindow();
-        GameViewL1 gameViewL1 = new GameViewL1();
-        stage.getScene().setRoot(gameViewL1);
+        GameView gameView = new GameView();
+        stage.getScene().setRoot(gameView);
     }
 
     @FXML

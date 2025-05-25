@@ -39,7 +39,7 @@ public class Wire {
     }
 
     public double calculateLength() {
-        List<Point2D> path = flatten(40); // مسیر شکسته واقعی سیم
+        List<Point2D> path = flatten(40);
         return calculatePathLength(path);
     }
 

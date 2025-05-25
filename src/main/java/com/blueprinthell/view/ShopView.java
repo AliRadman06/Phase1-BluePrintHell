@@ -4,6 +4,7 @@ import com.blueprinthell.controller.PacketController;
 import com.blueprinthell.logic.GameStats;
 import com.blueprinthell.model.ShopItem;
 import com.blueprinthell.util.Constants;
+import com.blueprinthell.util.SoundManager;
 import com.google.gson.Gson;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -69,10 +70,10 @@ public class ShopView extends AnchorPane {
         """);
         close.setOnAction(e -> {
             setVisible(false);
+            SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
             onClose.run();
         });
 
-        // Tooltip مشترک برای همه
         sharedTooltip.setWrapText(true);
         sharedTooltip.setVisible(false);
         sharedTooltip.setManaged(false);

@@ -2,6 +2,7 @@ package com.blueprinthell.view;
 
 import com.blueprinthell.controller.PacketController;
 import com.blueprinthell.model.*;
+import com.blueprinthell.util.SoundManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
@@ -85,7 +86,10 @@ public class StartSystemView extends AbstractDeviceView {
                 -fx-border-radius: 5;
                
         """);
-        startButton.setOnAction(e -> startAutoSendPackets());
+        startButton.setOnAction(e -> {
+            startAutoSendPackets();
+            SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+        });
 
 
         getChildren().addAll(body, innerBody, startButton, lamp);

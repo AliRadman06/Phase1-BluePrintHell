@@ -1,5 +1,6 @@
 package com.blueprinthell.controller;
 
+import com.blueprinthell.util.SoundManager;
 import com.blueprinthell.util.StageProvider;
 import com.blueprinthell.view.MainMenuView;
 import javafx.application.Application;
@@ -16,7 +17,7 @@ import java.net.URL;
 public class Game extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        StageProvider.setStage(primaryStage); // 👈 ثبت استیج
+        StageProvider.setStage(primaryStage);
 
         MainMenuView mainMenuView = new MainMenuView();
 
@@ -26,6 +27,8 @@ public class Game extends Application {
         primaryStage.setFullScreen(true);
         primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/images/icon.png")));
         primaryStage.show();
+        SoundManager.getInstance().playMusic("/audio/lulled-to-sleep-143280.mp3");
+
 
     }
 

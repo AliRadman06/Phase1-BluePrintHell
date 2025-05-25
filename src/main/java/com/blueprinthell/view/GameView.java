@@ -5,20 +5,17 @@ import com.blueprinthell.controller.WiringController;
 import com.blueprinthell.logic.GameStats;
 import com.blueprinthell.model.*;
 import com.blueprinthell.util.GameSession;
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
+import com.blueprinthell.util.SoundManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -33,14 +30,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameViewL1 extends AnchorPane {
+public class GameView extends AnchorPane {
     private final AnchorPane gamePane;
     private final Canvas gridCanvas;
     private final Button backButton;
     private Pane wiringLayer = new Pane();
     private final PacketController packetController;
     public static final double TOTAL_WIRE = 1500.0;
-    private GameStats gameStats; // اگه قبلاً نداری
+    private GameStats gameStats;
     private WiringController wiringController;
     private Label wireLabel;
     private Label coinLabel;
@@ -55,7 +52,7 @@ public class GameViewL1 extends AnchorPane {
 
 
 
-    public GameViewL1() {
+    public GameView() {
         GameSession.setCurrentLevel(1);
         GameStats.resetCoins();
 
@@ -105,6 +102,8 @@ public class GameViewL1 extends AnchorPane {
         dummyPath.add(new Point2D(0, 0));
         dummyPath.add(new Point2D(100, 0));
         s1.generateInitialPackets(dummyPath);
+        packetController.setTotalToBeSpawned(s1.getSquarePacket() + s1.getTrianglePacket());
+
 
 
         s1.initialize();
@@ -172,7 +171,7 @@ public class GameViewL1 extends AnchorPane {
 
 
         // — نمونهٔ EndSystem —
-        NetworkDevice e1 = SystemFactory.createSystem(SystemType.END, "e1", 1200, 120);
+        EndSystem e1 = (EndSystem) SystemFactory.createSystem(SystemType.END, "e1", 1200, 120);
         e1.setX(1200);
         e1.setY(120);
 
@@ -187,6 +186,7 @@ public class GameViewL1 extends AnchorPane {
 
         e1.initialize();
         AbstractDeviceView v4 = DeviceViewFactory.create(e1);
+        packetController.setEndSystem(e1);
         gamePane.getChildren().add(v4);
 
         // --- HUD Wire Label ---
@@ -228,7 +228,10 @@ public class GameViewL1 extends AnchorPane {
                             """);
         backButton.setLayoutX(1);
         backButton.setLayoutY(1);
-        backButton.setOnAction(e -> goBackToMenu());
+        backButton.setOnAction(e -> {
+            goBackToMenu();
+            SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+        });
         getChildren().add(backButton);
 
         // --- Skills Box ---
@@ -268,6 +271,7 @@ public class GameViewL1 extends AnchorPane {
             } else {
                 skillsBox.setVisible(false);
             }
+            SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
         });
         getChildren().add(skillsButton);
 
@@ -305,6 +309,7 @@ public class GameViewL1 extends AnchorPane {
         shopButton.setLayoutY(1);
 
         shopButton.setOnAction(e -> {
+            SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
             shopView.updateBuyButtons();
             shopView.setVisible(true);
             packetController.pause();
@@ -385,7 +390,7 @@ public class GameViewL1 extends AnchorPane {
             if (itemFinal.equals("O Atar")) {
                 action = () -> {
                     packetController.activateOAtarSkill();
-                    packetController.setOAtarCount(packetController.getOAtarCount()-1); // کم کردن کانتر
+                    packetController.setOAtarCount(packetController.getOAtarCount()-1);
                 };
                 isAvailable = packetController.isOAtarBought();
             } else if (itemFinal.equals("O Airyaman")) {
@@ -416,7 +421,7 @@ public class GameViewL1 extends AnchorPane {
                 skillBtn.setOnAction(ev -> {
                     action.run();
 
-                    // Refresh text
+
                     String newLabel;
                     if (itemFinal.equals("O Atar")) newLabel = "O Atar (" + packetController.getOAtarCount() + ")";
                     else if (itemFinal.equals("O Airyaman")) newLabel = "O Airyaman (" + packetController.getOAiryamanCount() + ")";
@@ -424,7 +429,7 @@ public class GameViewL1 extends AnchorPane {
 
                     skillBtn.setText(newLabel);
 
-                    // Disable if used up
+
                     if ((itemFinal.equals("O Atar") && !packetController.isOAtarBought()) ||
                             (itemFinal.equals("O Airyaman") && !packetController.isOAiryamanBought()) ||
                             (itemFinal.equals("O Anahita") && !packetController.isOAnahitaBought())) {
@@ -439,7 +444,7 @@ public class GameViewL1 extends AnchorPane {
                     }
                 });
 
-                // مقدار اولیه لیبل دکمه
+
                 if (itemFinal.equals("O Atar")) skillBtn.setText("O Atar (" + packetController.getOAtarCount() + ")");
                 else if (itemFinal.equals("O Airyaman")) skillBtn.setText("O Airyaman (" + packetController.getOAiryamanCount() + ")");
                 else skillBtn.setText("O Anahita (" + packetController.getOAnahitaCount() + ")");

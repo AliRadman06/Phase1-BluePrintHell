@@ -1,6 +1,7 @@
 package com.blueprinthell.view;
 
 import com.blueprinthell.model.NetworkDevice;
+import com.blueprinthell.util.SoundManager;
 import eu.hansolo.tilesfx.addons.Switch;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -68,8 +69,15 @@ public class MainMenuView extends AnchorPane {
             vb.getChildren().add(b);
 
             switch (txt) {
-                case "START" -> b.setOnAction(e -> switchToLevelsMenu());
-                case "EXIT" -> b.setOnAction(e -> System.exit(0));
+                case "START" -> b.setOnAction(e -> {switchToLevelsMenu();
+                    SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+                });
+                case "SETTING" -> b.setOnAction(e -> {switchToSettingsMenu();
+                    SoundManager.getInstance().playEffect("click", "/audio/click.mp3");
+                });
+                case "EXIT" -> b.setOnAction(e -> {
+                    System.exit(0);
+                });
             }
         }
 
@@ -82,5 +90,10 @@ public class MainMenuView extends AnchorPane {
 
         Stage stage = (Stage) getScene().getWindow();
         stage.getScene().setRoot(new LevelsMenuView());
+    }
+
+    private void switchToSettingsMenu() {
+        Stage stage = (Stage) getScene().getWindow();
+        stage.getScene().setRoot(new GameSettingsView());
     }
 }
